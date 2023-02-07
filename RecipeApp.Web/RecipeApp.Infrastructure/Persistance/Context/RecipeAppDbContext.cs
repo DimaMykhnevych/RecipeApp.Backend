@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RecipeApp.Domain.Entities;
-using RecipeApp.Domain.Models;
 
 namespace RecipeApp.Infrastructure.Persistance.Context
 {

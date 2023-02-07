@@ -1,6 +1,6 @@
-﻿namespace RecipeApp.Domain.Models
+﻿namespace RecipeApp.Application.DTOs
 {
-    public class UserAuthInfo
+    public class UserAuthInfoDto
     {
         public Guid UserId { get; set; }
         public string UserName { get; set; }

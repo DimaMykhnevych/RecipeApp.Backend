@@ -1,12 +1,12 @@
 ﻿using RecipeApp.Domain.Enums;
 
-namespace RecipeApp.Domain.Models
+namespace RecipeApp.Application.DTOs
 {
-    public class JWTTokenStatusResult
+    public class JWTTokenStatusResultDto
     {
         public string Token { get; set; }
         public bool IsAuthorized { get; set; }
-        public UserAuthInfo UserInfo { get; set; }
+        public UserAuthInfoDto UserInfo { get; set; }
         public LoginErrorCodes LoginErrorCode { get; set; }
     }
 }

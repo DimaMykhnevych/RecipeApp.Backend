@@ -22,6 +22,7 @@ namespace RecipeApp.Web.Installers
                         Type = SecuritySchemeType.ApiKey
                     });
                 x.AddSecurityRequirement(security);
+                x.EnableAnnotations();
             });
         }
     }
