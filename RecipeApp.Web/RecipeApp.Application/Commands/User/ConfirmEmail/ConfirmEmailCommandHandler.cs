@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Extensions;
 
-namespace RecipeApp.Application.Commands.User
+namespace RecipeApp.Application.Commands.User.ConfirmEmail
 {
     public class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand, bool>
     {
@@ -16,6 +16,8 @@ namespace RecipeApp.Application.Commands.User
 
         public async Task<bool> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(request);
+
             AppUser user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
                 return false;

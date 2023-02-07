@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace RecipeApp.Application.Commands.User
+namespace RecipeApp.Application.Commands.User.DeleteUser
 {
     public class DeleteUserCommand : IRequest<bool>
     {

@@ -1,8 +1,8 @@
 ﻿using RecipeApp.Application.Factories;
 using RecipeApp.Application.Services.AuthorizationService;
 using RecipeApp.Domain.Builders;
-using RecipeApp.Domain.Services.EmailService;
-using RecipeApp.Domain.Services.UserService;
+using RecipeApp.Domain.Services.Email.SendEmail;
+using RecipeApp.Domain.Services.User.CreateUser;
 using RecipeApp.Infrastructure.Persistance.Builders;
 
 namespace RecipeApp.Web.Installers

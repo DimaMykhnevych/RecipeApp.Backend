@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RecipeApp.Application.Commands.Auth;
+using RecipeApp.Application.Commands.Auth.SignIn;
 using RecipeApp.Application.DTOs;
-using RecipeApp.Application.Queries.User;
+using RecipeApp.Application.Queries.User.GetUser;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 

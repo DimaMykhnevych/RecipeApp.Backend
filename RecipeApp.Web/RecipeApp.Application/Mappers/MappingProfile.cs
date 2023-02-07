@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using RecipeApp.Application.Commands.User;
+using RecipeApp.Application.Commands.User.CreateUser;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Domain.Entities;
 

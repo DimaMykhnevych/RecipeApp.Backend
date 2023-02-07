@@ -4,7 +4,7 @@ using RecipeApp.Application.DTOs;
 using RecipeApp.Domain.Builders;
 using RecipeApp.Domain.Entities;
 
-namespace RecipeApp.Application.Queries.User
+namespace RecipeApp.Application.Queries.User.GetUser
 {
     public class GetUserQueryHandler : IRequestHandler<GetUserQuery, IEnumerable<UserAuthInfoDto>>
     {
@@ -19,6 +19,8 @@ namespace RecipeApp.Application.Queries.User
 
         public async Task<IEnumerable<UserAuthInfoDto>> Handle(GetUserQuery request, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(request);
+
             IEnumerable<AppUser> users = _userQueryBuilder
                 .SetBaseUserInfo()
                 .SetUserName(request.UserName)

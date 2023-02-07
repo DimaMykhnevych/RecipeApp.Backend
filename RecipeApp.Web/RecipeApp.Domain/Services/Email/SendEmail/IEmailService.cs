@@ -1,6 +1,6 @@
 ﻿using RecipeApp.Domain.Entities;
 
-namespace RecipeApp.Domain.Services.EmailService
+namespace RecipeApp.Domain.Services.Email.SendEmail
 {
     public interface IEmailService
     {

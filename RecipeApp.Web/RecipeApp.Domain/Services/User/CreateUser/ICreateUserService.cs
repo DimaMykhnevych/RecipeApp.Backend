@@ -1,6 +1,6 @@
 ﻿using RecipeApp.Domain.Entities;
 
-namespace RecipeApp.Domain.Services.UserService
+namespace RecipeApp.Domain.Services.User.CreateUser
 {
     public interface ICreateUserService
     {

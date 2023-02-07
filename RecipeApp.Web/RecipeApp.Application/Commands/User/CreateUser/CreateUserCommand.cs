@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System.ComponentModel.DataAnnotations;
 
-namespace RecipeApp.Application.Commands.User
+namespace RecipeApp.Application.Commands.User.CreateUser
 {
     public class CreateUserCommand : IRequest<bool>
     {

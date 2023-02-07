@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using RecipeApp.Application.Commands.User;
+using RecipeApp.Application.Commands.User.ConfirmEmail;
+using RecipeApp.Application.Commands.User.CreateUser;
+using RecipeApp.Application.Commands.User.DeleteUser;
 using RecipeApp.Application.DTOs;
-using RecipeApp.Application.Queries.User;
+using RecipeApp.Application.Queries.User.GetUser;
 using RecipeApp.Domain.Constants;
 using RecipeApp.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;

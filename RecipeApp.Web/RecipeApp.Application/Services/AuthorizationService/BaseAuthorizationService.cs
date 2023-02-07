@@ -1,4 +1,4 @@
-﻿using RecipeApp.Application.Commands.Auth;
+﻿using RecipeApp.Application.Commands.Auth.SignIn;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Application.Factories;
 using RecipeApp.Domain.Enums;

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using RecipeApp.Application.DTOs;
 
-namespace RecipeApp.Application.Commands.Auth
+namespace RecipeApp.Application.Commands.Auth.SignIn
 {
     public class SignInCommand : IRequest<JWTTokenStatusResultDto>
     {

@@ -4,9 +4,9 @@ using Microsoft.Extensions.Configuration;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Exceptions;
 using RecipeApp.Domain.Extensions;
-using RecipeApp.Domain.Services.EmailService;
+using RecipeApp.Domain.Services.Email.SendEmail;
 
-namespace RecipeApp.Domain.Services.UserService
+namespace RecipeApp.Domain.Services.User.CreateUser
 {
     public class CreateUserService : ICreateUserService
     {

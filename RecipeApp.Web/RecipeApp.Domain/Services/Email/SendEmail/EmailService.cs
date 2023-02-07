@@ -4,7 +4,7 @@ using RecipeApp.Domain.Models;
 using System.Net;
 using System.Net.Mail;
 
-namespace RecipeApp.Domain.Services.EmailService
+namespace RecipeApp.Domain.Services.Email.SendEmail
 {
     public class EmailService : IEmailService
     {

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using RecipeApp.Application.DTOs;
 
-namespace RecipeApp.Application.Queries.User
+namespace RecipeApp.Application.Queries.User.GetUser
 {
     public class GetUserQuery : IRequest<IEnumerable<UserAuthInfoDto>>
     {

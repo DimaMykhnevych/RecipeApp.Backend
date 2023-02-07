@@ -2,7 +2,7 @@
 using RecipeApp.Application.DTOs;
 using RecipeApp.Application.Services.AuthorizationService;
 
-namespace RecipeApp.Application.Commands.Auth
+namespace RecipeApp.Application.Commands.Auth.SignIn
 {
     public class SignInCommandHandler : IRequestHandler<SignInCommand, JWTTokenStatusResultDto>
     {
@@ -15,6 +15,8 @@ namespace RecipeApp.Application.Commands.Auth
 
         public async Task<JWTTokenStatusResultDto> Handle(SignInCommand request, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(request);
+
             return await _authorizationService.GenerateTokenAsync(request);
         }
     }

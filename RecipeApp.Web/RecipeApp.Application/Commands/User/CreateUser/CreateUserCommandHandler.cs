@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
 using RecipeApp.Domain.Entities;
-using RecipeApp.Domain.Services.UserService;
+using RecipeApp.Domain.Services.User.CreateUser;
 
-namespace RecipeApp.Application.Commands.User
+namespace RecipeApp.Application.Commands.User.CreateUser
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, bool>
     {
@@ -18,6 +18,8 @@ namespace RecipeApp.Application.Commands.User
 
         public async Task<bool> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(request);
+
             AppUser userModel = _mapper.Map<AppUser>(request);
             AppUser addedUser = await _userService
                 .CreateUserAsync(userModel,
