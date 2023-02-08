@@ -46,22 +46,22 @@ namespace RecipeApp.Application.Services.AuthorizationService
             };
         }
 
-        public async override Task<LoginErrorCodes> VerifyUserAsync(SignInCommand model)
+        public async override Task<LoginErrorCode> VerifyUserAsync(SignInCommand model)
         {
             AppUser user = await _userManager.FindByNameAsync(model.UserName);
             if (user == null)
             {
-                return LoginErrorCodes.InvalidUsernameOrPassword;
+                return LoginErrorCode.InvalidUsernameOrPassword;
             }
 
             if (_configuration.EmailConfirmationEnabled() && !await _userManager.IsEmailConfirmedAsync(user))
             {
-                return LoginErrorCodes.EmailConfirmationRequired;
+                return LoginErrorCode.EmailConfirmationRequired;
             }
 
             SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
 
-            return result.Succeeded ? LoginErrorCodes.None : LoginErrorCodes.InvalidUsernameOrPassword;
+            return result.Succeeded ? LoginErrorCode.None : LoginErrorCode.InvalidUsernameOrPassword;
         }
 
         public async override Task<UserAuthInfoDto> GetUserInfoAsync(string userName)

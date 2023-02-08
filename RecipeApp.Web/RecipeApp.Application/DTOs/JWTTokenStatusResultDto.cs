@@ -7,6 +7,6 @@ namespace RecipeApp.Application.DTOs
         public string Token { get; set; }
         public bool IsAuthorized { get; set; }
         public UserAuthInfoDto UserInfo { get; set; }
-        public LoginErrorCodes LoginErrorCode { get; set; }
+        public LoginErrorCode LoginErrorCode { get; set; }
     }
 }

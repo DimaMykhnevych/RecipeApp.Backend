@@ -16,8 +16,8 @@ namespace RecipeApp.Application.Services.AuthorizationService
         }
         public async Task<JWTTokenStatusResultDto> GenerateTokenAsync(SignInCommand model)
         {
-            LoginErrorCodes status = await VerifyUserAsync(model);
-            if (status != LoginErrorCodes.None)
+            LoginErrorCode status = await VerifyUserAsync(model);
+            if (status != LoginErrorCode.None)
             {
                 return new JWTTokenStatusResultDto()
                 {
@@ -36,12 +36,12 @@ namespace RecipeApp.Application.Services.AuthorizationService
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 IsAuthorized = true,
                 UserInfo = info,
-                LoginErrorCode = LoginErrorCodes.None
+                LoginErrorCode = LoginErrorCode.None
             };
         }
 
         public abstract Task<IEnumerable<Claim>> GetUserClaimsAsync(SignInCommand model);
         public abstract Task<UserAuthInfoDto> GetUserInfoAsync(string userName);
-        public abstract Task<LoginErrorCodes> VerifyUserAsync(SignInCommand model);
+        public abstract Task<LoginErrorCode> VerifyUserAsync(SignInCommand model);
     }
 }

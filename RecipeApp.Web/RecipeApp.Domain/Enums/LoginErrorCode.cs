@@ -1,6 +1,6 @@
 ﻿namespace RecipeApp.Domain.Enums
 {
-    public enum LoginErrorCodes
+    public enum LoginErrorCode
     {
         InvalidUsernameOrPassword,
         EmailConfirmationRequired,

@@ -2,7 +2,7 @@
 
 namespace RecipeApp.Domain.Services.Email.SendEmail
 {
-    public interface IEmailService
+    public interface ISendEmailService
     {
         Task SendAccountConfirmationEmail(AppUser receiver, string url);
     }

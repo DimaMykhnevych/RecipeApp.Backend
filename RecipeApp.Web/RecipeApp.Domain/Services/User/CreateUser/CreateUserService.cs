@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Exceptions;
 using RecipeApp.Domain.Extensions;
@@ -11,26 +12,35 @@ namespace RecipeApp.Domain.Services.User.CreateUser
     public class CreateUserService : ICreateUserService
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly IEmailService _emailService;
+        private readonly ISendEmailService _emailService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
-        public CreateUserService(UserManager<AppUser> userManager, IEmailService emailService, IConfiguration configuration)
+        public CreateUserService(
+            UserManager<AppUser> userManager,
+            ISendEmailService emailService,
+            IConfiguration configuration,
+            ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _emailService = emailService;
             _configuration = configuration;
+            _logger = loggerFactory?.CreateLogger(nameof(CreateUserService));
         }
 
         public async Task<AppUser> CreateUserAsync(AppUser user, string password, string confirmPassword, string clientURIForEmailConfirmation)
         {
+            _logger.LogDebug("Creating user {userName}", user.UserName);
             if (password != confirmPassword)
             {
+                _logger.LogWarning("Passwords don't match.");
                 throw new PasswordsMismatchException();
             }
 
             AppUser existingUser = await _userManager.FindByNameAsync(user.UserName);
             if (existingUser != null)
             {
+                _logger.LogWarning("Username {userName} has already been taken", user.UserName);
                 throw new UsernameAlreadyTakenException();
             }
 
@@ -41,6 +51,7 @@ namespace RecipeApp.Domain.Services.User.CreateUser
 
             if (_configuration.EmailConfirmationEnabled())
             {
+                _logger.LogDebug("Email confirmation enabled. Sending confirmation email to {userName}", user.UserName);
                 string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 var param = new Dictionary<string, string>
