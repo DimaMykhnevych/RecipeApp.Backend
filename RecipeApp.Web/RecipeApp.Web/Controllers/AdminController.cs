@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeApp.Application.Commands.DbManagement.CreateBackup;
+using RecipeApp.Application.Commands.DbManagement.RestoreDb;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Application.Queries.AppLogs.GetLogs;
 using RecipeApp.Domain.Constants;
@@ -42,6 +44,39 @@ namespace RecipeApp.Web.Controllers
         {
             LogsDto logs = await _mediator.Send(new GetLogsQuery { Date = date, GetLogsMode = GetLogsMode.File });
             return File(logs.LogsStream, "application/octet-stream", logs.FileName);
+        }
+
+        [HttpPost("backup-database")]
+        [SwaggerOperation(Summary = "Creates backup of the database and returns backup file as a result")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Stream))]
+        [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
+        [SwaggerResponse((int)HttpStatusCode.Forbidden, Description = "User is not administrator")]
+        public async Task<IActionResult> BackupDatabase()
+        {
+            DbBackupDto result = await _mediator.Send(new CreateBackupCommand());
+            return File(result.Backup, "application/octet-stream", result.BackupFileName);
+        }
+
+        [HttpPost("restore-database")]
+        [SwaggerOperation(Summary = "Restore database from a file", Description = "True = restore was completed successfully, false = database restore was failed")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Restore file was not provided")]
+        [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
+        [SwaggerResponse((int)HttpStatusCode.Forbidden, Description = "User is not administrator")]
+        public async Task<IActionResult> RestoreDatabase(IFormFile file)
+        {
+            if (file == null && !HttpContext.Request.Form.Files.Any())
+            {
+                return BadRequest();
+            }
+
+            file ??= HttpContext.Request.Form.Files[0];
+
+            using MemoryStream ms = new();
+            file.CopyTo(ms);
+
+            bool restoreResult = await _mediator.Send(new RestoreDbCommand { RestoreFileStream = ms });
+            return Ok(restoreResult);
         }
     }
 }

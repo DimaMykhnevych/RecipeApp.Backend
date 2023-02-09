@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="C:\Users\dimam\.nuget\packages\mysqlbackup.net\2.3.7\contentFiles\any\net6.0\logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Persistance\Repositories\" />
   </ItemGroup>
 
@@ -16,6 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MySqlBackup.NET" Version="2.3.7" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
   </ItemGroup>
 

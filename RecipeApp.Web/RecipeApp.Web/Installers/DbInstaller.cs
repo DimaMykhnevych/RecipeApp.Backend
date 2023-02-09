@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RecipeApp.Domain.Constants;
 using RecipeApp.Infrastructure.Persistance.Context;
 
 namespace RecipeApp.Web.Installers
@@ -7,7 +8,7 @@ namespace RecipeApp.Web.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            string connectionString = configuration["ConnectionStrings:Default"];
+            string connectionString = configuration[ConfigurationKeys.DefaultConnectionString];
             services.AddDbContext<RecipeAppDbContext>(opt =>
                     opt.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
         }

@@ -2,10 +2,13 @@
 using RecipeApp.Application.Services.AuthorizationService;
 using RecipeApp.Domain.Builders;
 using RecipeApp.Domain.Services.AppLogs.GetLogs;
+using RecipeApp.Domain.Services.DbManagement.CreateBackup;
+using RecipeApp.Domain.Services.DbManagement.RestoreDb;
 using RecipeApp.Domain.Services.Email.SendEmail;
 using RecipeApp.Domain.Services.User.CreateUser;
 using RecipeApp.Infrastructure.Persistance.Builders;
 using RecipeApp.Infrastructure.Persistance.Services.AppLogs;
+using RecipeApp.Infrastructure.Persistance.Services.DbManagement;
 
 namespace RecipeApp.Web.Installers
 {
@@ -21,6 +24,8 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<ISendEmailService, SendEmailService>();
             services.AddTransient<ICreateUserService, CreateUserService>();
             services.AddTransient<IGetLogsService, GetLogsService>();
+            services.AddTransient<IRestoreDbService, RestoreDbService>();
+            services.AddTransient<ICreateBackupService, CreateBackupService>();
 
             // builders
             services.AddTransient<IUserQueryBuilder, UserQueryBuilder>();
