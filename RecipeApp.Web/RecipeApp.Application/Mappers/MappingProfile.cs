@@ -18,6 +18,7 @@ namespace RecipeApp.Application.Mappers
                 .ForMember(u => u.UserId, m => m.MapFrom(u => u.Id));
 
             CreateMap<DbBackup, DbBackupDto>();
+            CreateMap<IngredientsPrediction, IngredientsPredictionDto>();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using RecipeApp.Domain.Constants;
-using RecipeApp.Domain.Models;
-using RecipeApp.Web.Options;
+using RecipeApp.Domain.Options;
 
 namespace RecipeApp.Web.Installers
 {
@@ -10,6 +9,7 @@ namespace RecipeApp.Web.Installers
         {
             services.Configure<MySqlConfigOptions>(configuration.GetSection(ConfigurationKeys.ConnectionStrings));
             services.Configure<EmailServiceOptions>(configuration.GetSection(ConfigurationKeys.EmailServiceOptions));
+            services.Configure<RoboflowApiOptions>(configuration.GetSection(ConfigurationKeys.RoboflowApiOptions));
         }
     }
 }

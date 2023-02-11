@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System.Text.Json.Serialization;
 
-namespace RecipeApp.Web.Options
+namespace RecipeApp.Domain.Options
 {
     public class MySqlConfigOptions
     {

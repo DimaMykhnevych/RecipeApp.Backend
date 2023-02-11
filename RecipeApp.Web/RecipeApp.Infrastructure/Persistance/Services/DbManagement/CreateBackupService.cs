@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using RecipeApp.Domain.Models;
+using RecipeApp.Domain.Options;
 using RecipeApp.Domain.Services.DbManagement.CreateBackup;
-using RecipeApp.Web.Options;
 
 namespace RecipeApp.Infrastructure.Persistance.Services.DbManagement
 {

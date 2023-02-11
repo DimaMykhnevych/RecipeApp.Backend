@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
+using RecipeApp.Domain.Options;
 using RecipeApp.Domain.Services.DbManagement.RestoreDb;
-using RecipeApp.Web.Options;
 
 namespace RecipeApp.Infrastructure.Persistance.Services.DbManagement
 {

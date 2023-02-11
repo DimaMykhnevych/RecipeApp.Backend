@@ -1,4 +1,4 @@
-﻿namespace RecipeApp.Domain.Models
+﻿namespace RecipeApp.Domain.Options
 {
     public class EmailServiceOptions
     {

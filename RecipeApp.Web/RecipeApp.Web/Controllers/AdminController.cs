@@ -60,14 +60,14 @@ namespace RecipeApp.Web.Controllers
         [HttpPost("restore-database")]
         [SwaggerOperation(Summary = "Restore database from a file", Description = "True = restore was completed successfully, false = database restore was failed")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Restore file was not provided")]
+        [SwaggerResponse((int)HttpStatusCode.UnprocessableEntity, Description = "Restore file was not provided")]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, Description = "User is not administrator")]
         public async Task<IActionResult> RestoreDatabase(IFormFile file)
         {
             if (file == null && !HttpContext.Request.Form.Files.Any())
             {
-                return BadRequest();
+                return UnprocessableEntity();
             }
 
             file ??= HttpContext.Request.Form.Files[0];

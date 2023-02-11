@@ -5,10 +5,12 @@ using RecipeApp.Domain.Services.AppLogs.GetLogs;
 using RecipeApp.Domain.Services.DbManagement.CreateBackup;
 using RecipeApp.Domain.Services.DbManagement.RestoreDb;
 using RecipeApp.Domain.Services.Email.SendEmail;
+using RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients;
 using RecipeApp.Domain.Services.User.CreateUser;
 using RecipeApp.Infrastructure.Persistance.Builders;
 using RecipeApp.Infrastructure.Persistance.Services.AppLogs;
 using RecipeApp.Infrastructure.Persistance.Services.DbManagement;
+using RecipeApp.Infrastructure.Persistance.Services.FoodRecognition;
 
 namespace RecipeApp.Web.Installers
 {
@@ -31,6 +33,9 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IUserQueryBuilder, UserQueryBuilder>();
 
             // repositories
+
+            //clients
+            services.AddHttpClient<IRecognizeIngredientsService, RecognizeIngredientsService>();
         }
     }
 }

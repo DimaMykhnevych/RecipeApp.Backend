@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RecipeApp.Domain.Entities;
-using RecipeApp.Domain.Models;
+using RecipeApp.Domain.Options;
 using System.Net;
 using System.Net.Mail;
 

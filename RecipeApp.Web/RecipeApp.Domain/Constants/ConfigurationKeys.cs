@@ -6,5 +6,6 @@
         public const string DefaultConnectionString = "ConnectionStrings:Default";
         public const string ConnectionStrings = "ConnectionStrings";
         public const string EmailServiceOptions = "EmailServiceOptions";
+        public const string RoboflowApiOptions = "RoboflowApiOptions";
     }
 }
