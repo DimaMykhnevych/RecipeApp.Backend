@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeApp.Infrastructure.Persistance.Context;
 
@@ -10,9 +11,10 @@ using RecipeApp.Infrastructure.Persistance.Context;
 namespace RecipeApp.Infrastructure.Migrations
 {
     [DbContext(typeof(RecipeAppDbContext))]
-    partial class RecipeAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230326074915_AddUserTables")]
+    partial class AddUserTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -189,7 +191,7 @@ namespace RecipeApp.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("RecipeApp.Domain.Entities.ExternalUser", b =>
+            modelBuilder.Entity("RecipeApp.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -202,9 +204,6 @@ namespace RecipeApp.Infrastructure.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserName")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -293,11 +292,11 @@ namespace RecipeApp.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RecipeApp.Domain.Entities.ExternalUser", b =>
+            modelBuilder.Entity("RecipeApp.Domain.Entities.User", b =>
                 {
                     b.HasOne("RecipeApp.Domain.Entities.AppUser", "AppUser")
                         .WithOne("User")
-                        .HasForeignKey("RecipeApp.Domain.Entities.ExternalUser", "AppUserId");
+                        .HasForeignKey("RecipeApp.Domain.Entities.User", "AppUserId");
 
                     b.Navigation("AppUser");
                 });

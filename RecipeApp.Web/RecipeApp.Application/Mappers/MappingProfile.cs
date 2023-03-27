@@ -19,6 +19,7 @@ namespace RecipeApp.Application.Mappers
 
             CreateMap<DbBackup, DbBackupDto>();
             CreateMap<IngredientsPrediction, IngredientsPredictionDto>();
+            CreateMap<ExternalUser, ExternalUserDto>();
         }
     }
 }

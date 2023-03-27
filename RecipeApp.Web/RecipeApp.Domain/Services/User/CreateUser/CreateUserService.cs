@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Exceptions;
 using RecipeApp.Domain.Extensions;
+using RecipeApp.Domain.Repositories.ExternalUserRepository;
 using RecipeApp.Domain.Services.Email.SendEmail;
 
 namespace RecipeApp.Domain.Services.User.CreateUser
@@ -13,17 +14,20 @@ namespace RecipeApp.Domain.Services.User.CreateUser
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ISendEmailService _emailService;
+        private readonly IExternalUserRepository _externalUserRepository;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
         public CreateUserService(
             UserManager<AppUser> userManager,
             ISendEmailService emailService,
+            IExternalUserRepository externalUserRepository,
             IConfiguration configuration,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _emailService = emailService;
+            _externalUserRepository = externalUserRepository;
             _configuration = configuration;
             _logger = loggerFactory?.CreateLogger(nameof(CreateUserService));
         }
@@ -63,7 +67,11 @@ namespace RecipeApp.Domain.Services.User.CreateUser
                 await _emailService.SendAccountConfirmationEmail(user, url);
             }
 
-            return await _userManager.FindByNameAsync(user.UserName);
+            var addedUser = await _userManager.FindByNameAsync(user.UserName);
+            await _externalUserRepository.Insert(new ExternalUser { AppUserId = addedUser.Id, Name = addedUser.UserName, UserName = addedUser.UserName });
+            await _externalUserRepository.Save();
+
+            return addedUser;
         }
     }
 }

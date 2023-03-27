@@ -4,12 +4,12 @@ using RecipeApp.Infrastructure.Persistance.Context;
 
 namespace RecipeApp.Infrastructure.Persistance.Builders
 {
-    public class UserQueryBuilder : IUserQueryBuilder
+    public class AppUserQueryBuilder : IAppUserQueryBuilder
     {
         private readonly RecipeAppDbContext _dbContext;
         private IQueryable<AppUser> _query;
 
-        public UserQueryBuilder(RecipeAppDbContext dbContext)
+        public AppUserQueryBuilder(RecipeAppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -22,13 +22,13 @@ namespace RecipeApp.Infrastructure.Persistance.Builders
         }
 
 
-        public IUserQueryBuilder SetBaseUserInfo()
+        public IAppUserQueryBuilder SetBaseUserInfo()
         {
             _query = _dbContext.AppUsers;
             return this;
         }
 
-        public IUserQueryBuilder SetUserEmail(string userEmail)
+        public IAppUserQueryBuilder SetUserEmail(string userEmail)
         {
             if (!string.IsNullOrEmpty(userEmail))
             {
@@ -37,7 +37,7 @@ namespace RecipeApp.Infrastructure.Persistance.Builders
             return this;
         }
 
-        public IUserQueryBuilder SetUserId(Guid? userId)
+        public IAppUserQueryBuilder SetUserId(int? userId)
         {
             if (userId is not null)
             {
@@ -46,7 +46,7 @@ namespace RecipeApp.Infrastructure.Persistance.Builders
             return this;
         }
 
-        public IUserQueryBuilder SetUserName(string userName)
+        public IAppUserQueryBuilder SetUserName(string userName)
         {
             if (!string.IsNullOrEmpty(userName))
             {

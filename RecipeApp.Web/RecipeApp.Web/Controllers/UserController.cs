@@ -6,7 +6,7 @@ using RecipeApp.Application.Commands.User.ConfirmEmail;
 using RecipeApp.Application.Commands.User.CreateUser;
 using RecipeApp.Application.Commands.User.DeleteUser;
 using RecipeApp.Application.DTOs;
-using RecipeApp.Application.Queries.User.GetUser;
+using RecipeApp.Application.Queries.User.GetExternalUser;
 using RecipeApp.Domain.Constants;
 using RecipeApp.Domain.Exceptions;
 using Swashbuckle.AspNetCore.Annotations;
@@ -27,12 +27,12 @@ namespace RecipeApp.Web.Controllers
 
         [HttpGet]
         [Authorize]
-        [SwaggerOperation(Summary = "Gets a filtered list of users", Description = "All parameters should be passed within the URI as a query parameters")]
+        [SwaggerOperation(Summary = "Gets a filtered list of external users (users, created by app users)", Description = "All parameters should be passed within the URI as a query parameters")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<UserAuthInfoDto>))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
-        public async Task<IActionResult> Get([FromQuery] GetUserQuery getUserQuery)
+        public async Task<IActionResult> Get([FromQuery] GetExternalUserQuery getUserQuery)
         {
-            IEnumerable<UserAuthInfoDto> users = await _mediator.Send(getUserQuery);
+            IEnumerable<ExternalUserDto> users = await _mediator.Send(getUserQuery);
             return Ok(users);
         }
 
@@ -92,7 +92,7 @@ namespace RecipeApp.Web.Controllers
 
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = Role.Admin)]
-        [SwaggerOperation(Summary = "Deletes user by Id",
+        [SwaggerOperation(Summary = "Deletes app user by Id",
             Description = "Available only for administrators")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.UnprocessableEntity, Description = "Errors occurred during user deletion. See details in the error response")]

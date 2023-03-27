@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeApp.Application.Commands.Auth.SignIn;
 using RecipeApp.Application.DTOs;
-using RecipeApp.Application.Queries.User.GetUser;
+using RecipeApp.Application.Queries.User.GetAppUser;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 
@@ -29,7 +29,7 @@ namespace RecipeApp.Web.Controllers
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         public async Task<IActionResult> GetUserInfo()
         {
-            IEnumerable<UserAuthInfoDto> users = await _mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+            IEnumerable<UserAuthInfoDto> users = await _mediator.Send(new GetAppUserQuery { UserName = User.Identity.Name });
 
             if (users == null || !users.Any())
             {

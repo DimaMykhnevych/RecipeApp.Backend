@@ -2,7 +2,7 @@
 
 namespace RecipeApp.Domain.Entities
 {
-    public class UserRole : IdentityRole<Guid>
+    public class UserRole : IdentityRole<int>
     {
     }
 }
