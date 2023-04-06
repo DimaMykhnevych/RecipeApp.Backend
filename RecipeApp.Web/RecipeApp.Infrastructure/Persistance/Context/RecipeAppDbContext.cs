@@ -13,6 +13,8 @@ namespace RecipeApp.Infrastructure.Persistance.Context
 
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<ExternalUser> ExternalUsers { get; set; }
+        public DbSet<Family> Families { get; set; }
+        public DbSet<FamilyMember> FamilyMembers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
