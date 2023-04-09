@@ -2,10 +2,7 @@
 
 namespace RecipeApp.Domain.Repositories.ExternalUserRepository
 {
-    public interface IExternalUserRepository
+    public interface IExternalUserRepository : IRepository<ExternalUser>
     {
-        Task<ExternalUser> Insert(ExternalUser entity);
-
-        Task Save();
     }
 }

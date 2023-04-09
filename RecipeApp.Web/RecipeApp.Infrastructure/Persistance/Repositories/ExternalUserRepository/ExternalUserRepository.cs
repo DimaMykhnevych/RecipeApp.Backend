@@ -4,23 +4,10 @@ using RecipeApp.Infrastructure.Persistance.Context;
 
 namespace RecipeApp.Infrastructure.Persistance.Repositories.ExternalUserRepository
 {
-    public class ExternalUserRepository : IExternalUserRepository
+    public class ExternalUserRepository : Repository<ExternalUser>, IExternalUserRepository
     {
-        private readonly RecipeAppDbContext _context;
-        public ExternalUserRepository(RecipeAppDbContext context)
+        public ExternalUserRepository(RecipeAppDbContext context) : base(context)
         {
-            _context = context;
-        }
-
-        public async Task<ExternalUser> Insert(ExternalUser entity)
-        {
-            await _context.ExternalUsers.AddAsync(entity);
-            return entity;
-        }
-
-        public async Task Save()
-        {
-            await _context.SaveChangesAsync();
         }
     }
 }

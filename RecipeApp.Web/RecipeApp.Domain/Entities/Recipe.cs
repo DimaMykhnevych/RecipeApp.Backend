@@ -14,6 +14,8 @@
         public bool Healthy { get; set; }
         public Season? Season { get; set; }
         public int Servings { get; set; }
+        public string Summary { get; set; }
+        public DishType DishType { get; set; }
 
         public ICollection<MealPlanDay> MealPlanDays { get; set; }
         public ICollection<RecipeStep> RecipeSteps { get; set; }

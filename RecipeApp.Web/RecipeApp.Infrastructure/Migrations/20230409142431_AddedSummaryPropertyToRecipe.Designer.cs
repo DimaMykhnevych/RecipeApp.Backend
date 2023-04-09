@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeApp.Infrastructure.Persistance.Context;
 
@@ -10,9 +11,10 @@ using RecipeApp.Infrastructure.Persistance.Context;
 namespace RecipeApp.Infrastructure.Migrations
 {
     [DbContext(typeof(RecipeAppDbContext))]
-    partial class RecipeAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230409142431_AddedSummaryPropertyToRecipe")]
+    partial class AddedSummaryPropertyToRecipe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -306,6 +308,9 @@ namespace RecipeApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
@@ -425,9 +430,6 @@ namespace RecipeApp.Infrastructure.Migrations
 
                     b.Property<double>("Carbs")
                         .HasColumnType("double");
-
-                    b.Property<int>("DishType")
-                        .HasColumnType("int");
 
                     b.Property<double>("Fat")
                         .HasColumnType("double");

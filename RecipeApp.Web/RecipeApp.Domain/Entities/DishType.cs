@@ -4,7 +4,8 @@
     {
         Breakfast,
         Lunch,
-        AfternoonSnack,
+        Snack,
         Dinner,
+        Any
     }
 }
