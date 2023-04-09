@@ -10,5 +10,6 @@
 
         public virtual AppUser AppUser { get; set; }
         public ICollection<FamilyMember> FamilyMembers { get; set; }
+        public ICollection<ForbiddenNutrient> ForbiddenNutrients { get; set; }
     }
 }

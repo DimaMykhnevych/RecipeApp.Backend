@@ -7,5 +7,6 @@
         public string Info { get; set; }
 
         public ICollection<FamilyMember> FamilyMembers { get; set; }
+        public ICollection<MealPlan> MealPlans { get; set; }
     }
 }

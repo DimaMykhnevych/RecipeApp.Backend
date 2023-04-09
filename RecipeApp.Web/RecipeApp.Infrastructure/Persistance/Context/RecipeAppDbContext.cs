@@ -15,6 +15,17 @@ namespace RecipeApp.Infrastructure.Persistance.Context
         public DbSet<ExternalUser> ExternalUsers { get; set; }
         public DbSet<Family> Families { get; set; }
         public DbSet<FamilyMember> FamilyMembers { get; set; }
+        public DbSet<MealPlan> MealPlans { get; set; }
+        public DbSet<Ingestion> Ingestions { get; set; }
+        public DbSet<MealPlanDay> MealPlanDays { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<RecipeStep> RecipeSteps { get; set; }
+        public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
+        public DbSet<StoredIngredient> StoredIngredients { get; set; }
+        public DbSet<Nutrient> Nutrients { get; set; }
+        public DbSet<NutrientIngredient> NutrientIngredients { get; set; }
+        public DbSet<ForbiddenNutrient> ForbiddenNutrients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

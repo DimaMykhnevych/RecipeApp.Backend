@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeApp.Infrastructure.Persistance.Context;
 
@@ -10,9 +11,10 @@ using RecipeApp.Infrastructure.Persistance.Context;
 namespace RecipeApp.Infrastructure.Migrations
 {
     [DbContext(typeof(RecipeAppDbContext))]
-    partial class RecipeAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230409083649_AddedRecipeIngredients")]
+    partial class AddedRecipeIngredients
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,30 +258,6 @@ namespace RecipeApp.Infrastructure.Migrations
                     b.ToTable("FamilyMembers");
                 });
 
-            modelBuilder.Entity("RecipeApp.Domain.Entities.ForbiddenNutrient", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExternalUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NutrientId")
-                        .HasColumnType("int");
-
-                    b.Property<double?>("RequiredPercentageOfDailyNeeds")
-                        .HasColumnType("double");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExternalUserId");
-
-                    b.HasIndex("NutrientId");
-
-                    b.ToTable("ForbiddenNutrients");
-                });
-
             modelBuilder.Entity("RecipeApp.Domain.Entities.Ingestion", b =>
                 {
                     b.Property<int>("Id")
@@ -373,50 +351,6 @@ namespace RecipeApp.Infrastructure.Migrations
                     b.ToTable("MealPlanDays");
                 });
 
-            modelBuilder.Entity("RecipeApp.Domain.Entities.Nutrient", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Unit")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Nutrients");
-                });
-
-            modelBuilder.Entity("RecipeApp.Domain.Entities.NutrientIngredient", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("double");
-
-                    b.Property<int>("IngredientId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NutrientId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("PercentOfDailyNeeds")
-                        .HasColumnType("double");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IngredientId");
-
-                    b.HasIndex("NutrientId");
-
-                    b.ToTable("NutrientIngredients");
-                });
-
             modelBuilder.Entity("RecipeApp.Domain.Entities.Recipe", b =>
                 {
                     b.Property<int>("Id")
@@ -505,36 +439,6 @@ namespace RecipeApp.Infrastructure.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("RecipeSteps");
-                });
-
-            modelBuilder.Entity("RecipeApp.Domain.Entities.StoredIngredient", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("double");
-
-                    b.Property<int>("AppUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("IngredientId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("IngredientId");
-
-                    b.ToTable("StoredIngredients");
                 });
 
             modelBuilder.Entity("RecipeApp.Domain.Entities.UserRole", b =>
@@ -643,25 +547,6 @@ namespace RecipeApp.Infrastructure.Migrations
                     b.Navigation("Family");
                 });
 
-            modelBuilder.Entity("RecipeApp.Domain.Entities.ForbiddenNutrient", b =>
-                {
-                    b.HasOne("RecipeApp.Domain.Entities.ExternalUser", "ExternalUser")
-                        .WithMany("ForbiddenNutrients")
-                        .HasForeignKey("ExternalUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RecipeApp.Domain.Entities.Nutrient", "Nutrient")
-                        .WithMany("ForbiddenNutrients")
-                        .HasForeignKey("NutrientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExternalUser");
-
-                    b.Navigation("Nutrient");
-                });
-
             modelBuilder.Entity("RecipeApp.Domain.Entities.MealPlan", b =>
                 {
                     b.HasOne("RecipeApp.Domain.Entities.AppUser", "AppUser")
@@ -706,25 +591,6 @@ namespace RecipeApp.Infrastructure.Migrations
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("RecipeApp.Domain.Entities.NutrientIngredient", b =>
-                {
-                    b.HasOne("RecipeApp.Domain.Entities.Ingredient", "Ingredient")
-                        .WithMany("NutrientIngredients")
-                        .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RecipeApp.Domain.Entities.Nutrient", "Nutrient")
-                        .WithMany("NutrientIngredients")
-                        .HasForeignKey("NutrientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ingredient");
-
-                    b.Navigation("Nutrient");
-                });
-
             modelBuilder.Entity("RecipeApp.Domain.Entities.RecipeIngredient", b =>
                 {
                     b.HasOne("RecipeApp.Domain.Entities.Ingredient", "Ingredient")
@@ -755,30 +621,9 @@ namespace RecipeApp.Infrastructure.Migrations
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("RecipeApp.Domain.Entities.StoredIngredient", b =>
-                {
-                    b.HasOne("RecipeApp.Domain.Entities.AppUser", "AppUser")
-                        .WithMany("StoredIngredients")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RecipeApp.Domain.Entities.Ingredient", "Ingredient")
-                        .WithMany("StoredIngredients")
-                        .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Ingredient");
-                });
-
             modelBuilder.Entity("RecipeApp.Domain.Entities.AppUser", b =>
                 {
                     b.Navigation("MealPlans");
-
-                    b.Navigation("StoredIngredients");
 
                     b.Navigation("User");
                 });
@@ -786,8 +631,6 @@ namespace RecipeApp.Infrastructure.Migrations
             modelBuilder.Entity("RecipeApp.Domain.Entities.ExternalUser", b =>
                 {
                     b.Navigation("FamilyMembers");
-
-                    b.Navigation("ForbiddenNutrients");
                 });
 
             modelBuilder.Entity("RecipeApp.Domain.Entities.Family", b =>
@@ -804,23 +647,12 @@ namespace RecipeApp.Infrastructure.Migrations
 
             modelBuilder.Entity("RecipeApp.Domain.Entities.Ingredient", b =>
                 {
-                    b.Navigation("NutrientIngredients");
-
                     b.Navigation("RecipeIngredients");
-
-                    b.Navigation("StoredIngredients");
                 });
 
             modelBuilder.Entity("RecipeApp.Domain.Entities.MealPlan", b =>
                 {
                     b.Navigation("MealPlanDays");
-                });
-
-            modelBuilder.Entity("RecipeApp.Domain.Entities.Nutrient", b =>
-                {
-                    b.Navigation("ForbiddenNutrients");
-
-                    b.Navigation("NutrientIngredients");
                 });
 
             modelBuilder.Entity("RecipeApp.Domain.Entities.Recipe", b =>

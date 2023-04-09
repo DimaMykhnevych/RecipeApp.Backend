@@ -8,5 +8,7 @@ namespace RecipeApp.Domain.Entities
         public DateTime RegistryDate { get; set; }
 
         public virtual ExternalUser User { get; set; }
+        public ICollection<MealPlan> MealPlans { get; set; }
+        public ICollection<StoredIngredient> StoredIngredients { get; set; }
     }
 }
