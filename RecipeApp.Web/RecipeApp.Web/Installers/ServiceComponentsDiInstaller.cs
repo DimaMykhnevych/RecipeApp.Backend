@@ -46,6 +46,7 @@ namespace RecipeApp.Web.Installers
             // builders
             services.AddTransient<IExternalUserQueryBuilder, ExternalUserQueryBuilder>();
             services.AddTransient<IAppUserQueryBuilder, AppUserQueryBuilder>();
+            services.AddTransient<IRecipeQueryBuilder, RecipeQueryBuilder>();
 
             // repositories
             services.AddTransient<IExternalUserRepository, ExternalUserRepository>();

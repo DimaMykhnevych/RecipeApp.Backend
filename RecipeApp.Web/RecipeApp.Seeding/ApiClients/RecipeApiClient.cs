@@ -49,6 +49,11 @@ namespace RecipeApp.Seeding.ApiClients
 
             var apiRoute = GetFullApiRoute(parameters, RecipeApiRoutes.GetRecipeById);
             var response = await TryExecuteGetRequestAsync(apiRoute);
+            if(response is null)
+            {
+                return null;
+            }
+
             var responseString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<RecipeDto>(responseString);
         }

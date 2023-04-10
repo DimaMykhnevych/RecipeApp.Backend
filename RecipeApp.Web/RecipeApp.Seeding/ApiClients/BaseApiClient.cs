@@ -34,14 +34,17 @@ namespace RecipeApp.Seeding.ApiClients
                 if (response.StatusCode == HttpStatusCode.PaymentRequired)
                 {
                     index++;
+                    Console.WriteLine($"Getting next API key: {index}");
                 }
                 else if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
+                    Console.WriteLine("Too many requests. Retreying in 1 minute...");
                     Thread.Sleep(60000);
                 }
                 else if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception(response.ReasonPhrase);
+                    Console.WriteLine(response.ReasonPhrase);
+                    return null;
                 }
                 else
                 {

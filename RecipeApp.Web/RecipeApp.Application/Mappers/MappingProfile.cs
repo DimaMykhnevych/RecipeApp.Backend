@@ -20,6 +20,17 @@ namespace RecipeApp.Application.Mappers
             CreateMap<DbBackup, DbBackupDto>();
             CreateMap<IngredientsPrediction, IngredientsPredictionDto>();
             CreateMap<ExternalUser, ExternalUserDto>();
+            CreateMap<RecipeStep, RecipeStepDto>();
+            CreateMap<Recipe, RecipeDto>()
+                .ForMember(r => r.Ingredients, 
+                           m => m.MapFrom(i => i.RecipeIngredients
+                                               .Select(ri => new IngredientDto()
+                                               {
+                                                   Id = ri.IngredientId,
+                                                   Amount = ri.Amount,
+                                                   Name = ri.Ingredient.Name,
+                                                   Unit = ri.Ingredient.Unit
+                                               })));
         }
     }
 }

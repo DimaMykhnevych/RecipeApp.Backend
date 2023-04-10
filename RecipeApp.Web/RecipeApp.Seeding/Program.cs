@@ -26,8 +26,20 @@ int recipesAmount = 1;
 
 for (int i = 0; i < recipesAmount; i++)
 {
-    Random random = new ();
+    Console.WriteLine($"Adding recipe #{i}");
+    Random random = new();
     int id = random.Next(1, 756814);
     RecipeDto recipe = await recipeApiClient.GetRecipeInfo(id);
-    await addRecipeService.AddRecipe(recipe);
+    if (recipe == null)
+    {
+        continue;
+    }
+    try
+    {
+        await addRecipeService.AddRecipe(recipe);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Unhandled exception: {ex.Message}");
+    }
 }

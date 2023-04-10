@@ -50,8 +50,9 @@ namespace RecipeApp.Seeding.Services
                 RecipeSteps = ConvertRecipeStep(recipeDto.AnalyzedInstructions)
             };
 
+            var distinctIngredients = recipeDto.ExtendedIngredients.DistinctBy(c => c.Name);
             recipe.RecipeIngredients = new List<RecipeIngredient>();
-            foreach (var ingredient in recipeDto.ExtendedIngredients)
+            foreach (var ingredient in distinctIngredients)
             {
                 var targetUnit = GetIngredientUnit(ingredient);
                 var targetAmount = await GetIngredientAmount(ingredient, targetUnit);
@@ -63,6 +64,7 @@ namespace RecipeApp.Seeding.Services
                 if (existingIngredient != null)
                 {
                     recipeIngredient.IngredientId = existingIngredient.Id;
+                    recipe.RecipeIngredients.Add(recipeIngredient);
                     continue;
                 }
 
