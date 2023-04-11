@@ -31,6 +31,8 @@ namespace RecipeApp.Application.Mappers
                                                    Name = ri.Ingredient.Name,
                                                    Unit = ri.Ingredient.Unit
                                                })));
+
+            CreateMap<Ingredient, IngredientDto>();
         }
     }
 }

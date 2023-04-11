@@ -18,6 +18,7 @@ namespace RecipeApp.Application.Queries.Recipe.GetRecipes
             _mapper = mapper;
             _logger = loggerFactory?.CreateLogger(nameof(GetRecipesQueryHandler));
         }
+
         public async Task<GetRecipesDto> Handle(GetRecipesQuery request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling get recipes request");
