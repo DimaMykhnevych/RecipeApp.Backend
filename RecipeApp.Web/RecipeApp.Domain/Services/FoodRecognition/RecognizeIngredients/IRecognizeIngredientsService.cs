@@ -1,9 +1,9 @@
-﻿using RecipeApp.Domain.Models;
+﻿using RecipeApp.Domain.Entities;
 
 namespace RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients
 {
     public interface IRecognizeIngredientsService
     {
-        public Task<IEnumerable<IngredientsPrediction>> GetIngredientsPredictions(MemoryStream photo);
+        public Task<IEnumerable<Ingredient>> GetIngredientsPredictions(MemoryStream photo);
     }
 }

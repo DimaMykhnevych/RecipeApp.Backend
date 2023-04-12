@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using RecipeApp.Application.DTOs;
+using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Models;
 using RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients;
 
@@ -28,8 +29,8 @@ namespace RecipeApp.Application.Commands.FoodRecognition.RecognizeIngredients
             _logger.LogInformation("Handling recognize ingredients request");
             ArgumentNullException.ThrowIfNull(request);
 
-            IEnumerable<IngredientsPrediction> predictions = await _recognizeIngredientsService.GetIngredientsPredictions(request.Image);
-            IEnumerable<IngredientsPredictionDto> predictionDtos = _mapper.Map<IEnumerable<IngredientsPredictionDto>>(predictions);
+            IEnumerable<Ingredient> predictions = await _recognizeIngredientsService.GetIngredientsPredictions(request.Image);
+            IEnumerable<IngredientDto> predictionDtos = _mapper.Map<IEnumerable<IngredientDto>>(predictions);
             return new RecognizedIngredientsDto { Ingredients = predictionDtos };
         }
     }

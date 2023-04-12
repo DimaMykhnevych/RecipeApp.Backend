@@ -2,6 +2,6 @@
 {
     public class RecognizedIngredientsDto
     {
-        public IEnumerable<IngredientsPredictionDto> Ingredients { get; set; }
+        public IEnumerable<IngredientDto> Ingredients { get; set; }
     }
 }
