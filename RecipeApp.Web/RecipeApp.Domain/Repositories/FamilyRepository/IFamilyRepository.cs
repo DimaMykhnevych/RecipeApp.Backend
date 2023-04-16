@@ -6,5 +6,6 @@ namespace RecipeApp.Domain.Repositories.FamilyRepository
     {
         Task InsertAppUserFamily(int appUserId, Family family);
         Task<IEnumerable<int>> GetAppUserFamilyIds(int appUserId);
+        Task<IEnumerable<FamilyMember>> GetFamilyMembers(int familyId);
     }
 }

@@ -4,19 +4,25 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Domain.Context;
-using RecipeApp.Domain.Entities;
+using RecipeApp.Domain.Repositories.FamilyRepository;
 
 namespace RecipeApp.Application.Queries.Family.GetAppUserFamilies
 {
     public class GetAppUserFamiliesQueryHandler : IRequestHandler<GetAppUserFamiliesQuery, GetFamiliesDto>
     {
         private readonly IRecipeAppDbContext _context;
+        private readonly IFamilyRepository _familyRepository;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public GetAppUserFamiliesQueryHandler(IRecipeAppDbContext context, IMapper mapper, ILoggerFactory loggerFactory)
+        public GetAppUserFamiliesQueryHandler(
+            IRecipeAppDbContext context,
+            IFamilyRepository familyRepository,
+            IMapper mapper,
+            ILoggerFactory loggerFactory)
         {
             _context = context;
+            _familyRepository = familyRepository;
             _mapper = mapper;
             _logger = loggerFactory?.CreateLogger(nameof(GetAppUserFamiliesQueryHandler));
         }
@@ -26,18 +32,17 @@ namespace RecipeApp.Application.Queries.Family.GetAppUserFamilies
             _logger.LogInformation("Handling get families request");
             ArgumentNullException.ThrowIfNull(request);
 
-            ExternalUser appUserExternal = await _context.ExternalUsers.FirstAsync(u => u.AppUserId == request.UserId);
-            List<FamilyMember> families = await _context.FamilyMembers
-                .Include(fm => fm.ExternalUser)
+            IEnumerable<int> appUserFamilies = await _familyRepository.GetAppUserFamilyIds(request.UserId);
+            List<Domain.Entities.Family> families = await _context.Families
+                .Include(fm => fm.FamilyMembers)
+                .ThenInclude(fm => fm.ExternalUser)
                 .AsNoTracking()
-                .Include(fm => fm.Family)
-                .AsNoTracking()
-                .Where(fm => fm.ExternalUserId == appUserExternal.Id)
+                .Where(fm => appUserFamilies.Contains(fm.Id))
                 .ToListAsync();
 
             return new GetFamiliesDto
             {
-                Families = _mapper.Map<IEnumerable<FamilyDto>>(families.Select(fm => fm.Family)),
+                Families = _mapper.Map<IEnumerable<FamilyDto>>(families),
                 ResultsAmount = families.Count()
             };
         }
