@@ -3,18 +3,26 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Domain.Builders;
+using RecipeApp.Domain.Models;
+using RecipeApp.Domain.Services.Recipe.IncludeIngredientsService;
 
 namespace RecipeApp.Application.Queries.Recipe.GetRecipes
 {
     public class GetRecipesQueryHandler : IRequestHandler<GetRecipesQuery, GetRecipesDto>
     {
         private readonly IRecipeQueryBuilder _recipeQueryBuilder;
+        private readonly IIncludeIngredientsService _includeIngredientsService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public GetRecipesQueryHandler(IRecipeQueryBuilder recipeQueryBuilder, IMapper mapper, ILoggerFactory loggerFactory)
+        public GetRecipesQueryHandler(
+            IRecipeQueryBuilder recipeQueryBuilder,
+            IIncludeIngredientsService includeIngredientsService,
+            IMapper mapper,
+            ILoggerFactory loggerFactory)
         {
             _recipeQueryBuilder = recipeQueryBuilder;
+            _includeIngredientsService = includeIngredientsService;
             _mapper = mapper;
             _logger = loggerFactory?.CreateLogger(nameof(GetRecipesQueryHandler));
         }
@@ -26,32 +34,48 @@ namespace RecipeApp.Application.Queries.Recipe.GetRecipes
 
             IRecipeQueryBuilder recipeBaseQuery = _recipeQueryBuilder
                 .SetBaseRecipeInfo()
-                .SetId(request.RecipeId)
-                .SetTitle(request.Title)
-                .SetCalories(request.FromCalories, request.ToCalories)
-                .SetCarbs(request.FromCarbs, request.ToCarbs)
-                .SetFat(request.FromFat, request.ToFat)
-                .SetProtein(request.FromProtein, request.ToProtein)
-                .SetReadyInMinutes(request.FromReadyInMinutes, request.ToReadyInMinutes)
-                .SetVegan(request.IsVegan)
-                .SetHealthy(request.IsHealthy)
-                .SetSeason(request.Season)
-                .SetDishType(request.DishType);
-
-            // TODO get user's stored ingredients
-            if (request.UseCurrentlyStoredIngredients.HasValue && request.UseCurrentlyStoredIngredients.Value)
-            {
-                recipeBaseQuery.SetIncludeIngredients(Array.Empty<int>());
-            }
+                .SetId(request.RecipesFiltering.RecipeId)
+                .SetTitle(request.RecipesFiltering.Title)
+                .SetCalories(request.RecipesFiltering.FromCalories, request.RecipesFiltering.ToCalories)
+                .SetCarbs(request.RecipesFiltering.FromCarbs, request.RecipesFiltering.ToCarbs)
+                .SetFat(request.RecipesFiltering.FromFat, request.RecipesFiltering.ToFat)
+                .SetProtein(request.RecipesFiltering.FromProtein, request.RecipesFiltering.ToProtein)
+                .SetReadyInMinutes(request.RecipesFiltering.FromReadyInMinutes, request.RecipesFiltering.ToReadyInMinutes)
+                .SetVegan(request.RecipesFiltering.IsVegan)
+                .SetHealthy(request.RecipesFiltering.IsHealthy)
+                .SetSeason(request.RecipesFiltering.Season)
+                .SetDishType(request.RecipesFiltering.DishType);
 
             // TODO get user's forbidden ingredients (possibly for certain family members)
-            if (request.ExcludeForbiddenIngredients.HasValue && request.ExcludeForbiddenIngredients.Value)
+            if (request.RecipesFiltering.ExcludeForbiddenIngredients.HasValue && request.RecipesFiltering.ExcludeForbiddenIngredients.Value)
             {
                 recipeBaseQuery.SetExcludeIngredients(Array.Empty<int>());
             }
 
             IEnumerable<Domain.Entities.Recipe> recipes = recipeBaseQuery.Build();
+            RecipesMatchingResult matchingResult = null;
+            if (request.RecipesFiltering.UseCurrentlyStoredIngredients.HasValue && request.RecipesFiltering.UseCurrentlyStoredIngredients.Value)
+            {
+                SetStoredIngredients setIngredientsModel = new()
+                {
+                    UserId = request.UserId,
+                    FilteredRecipes = recipes,
+                    ConsiderIngredientsAmount = request.RecipesFiltering.ConsiderIngredientsAmount,
+                    AcceptableMatchIngredientsPercentage = request.AcceptableMatchIngredientsPercentage
+                };
+                matchingResult = await _includeIngredientsService.SetIncludeIngredients(setIngredientsModel);
+                recipes = matchingResult.FilteredRecipes;
+            }
+
             var recipeDtos = _mapper.Map<IEnumerable<RecipeDto>>(recipes);
+            if (matchingResult != null && matchingResult.RecipesMatchingPercentage != null)
+            {
+                foreach (var recipe in recipeDtos)
+                {
+                    recipe.IngredientsMatchingPercentage = matchingResult.RecipesMatchingPercentage[recipe.Id];
+                }
+            }
+
             return new GetRecipesDto
             {
                 Recipes = recipeDtos,

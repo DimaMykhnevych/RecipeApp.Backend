@@ -16,7 +16,6 @@ namespace RecipeApp.Domain.Builders
         IRecipeQueryBuilder SetHealthy(bool? isHealthy);
         IRecipeQueryBuilder SetSeason(Season? season);
         IRecipeQueryBuilder SetDishType(DishType? dishType);
-        IRecipeQueryBuilder SetIncludeIngredients(IEnumerable<int> ingredientIds);
         IRecipeQueryBuilder SetExcludeIngredients(IEnumerable<int> ingredientIds);
     }
 }

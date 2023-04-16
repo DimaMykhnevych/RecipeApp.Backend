@@ -4,6 +4,7 @@ namespace RecipeApp.Application.DTOs
 {
     public class RecipeDto
     {
+        public double? IngredientsMatchingPercentage { get; set; }
         public int Id { get; set; }
         public string Title { get; set; }
         public string Image { get; set; }

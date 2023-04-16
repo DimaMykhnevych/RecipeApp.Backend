@@ -153,17 +153,6 @@ namespace RecipeApp.Infrastructure.Persistance.Builders
             return this;
         }
 
-        public IRecipeQueryBuilder SetIncludeIngredients(IEnumerable<int> ingredientIds)
-        {
-            // TODO possible rewrite to include recipe if it contains more then 80% of given ingredients
-            if (ingredientIds != null && ingredientIds.Any())
-            {
-                _query = _query.Where(r => r.RecipeIngredients.All(ri => ingredientIds.Contains(ri.IngredientId)));
-            }
-
-            return this;
-        }
-
         public IRecipeQueryBuilder SetSeason(Season? season)
         {
             if (season != null)

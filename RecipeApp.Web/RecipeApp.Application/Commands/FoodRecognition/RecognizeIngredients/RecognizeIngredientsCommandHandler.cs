@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Domain.Entities;
-using RecipeApp.Domain.Models;
 using RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients;
 
 namespace RecipeApp.Application.Commands.FoodRecognition.RecognizeIngredients

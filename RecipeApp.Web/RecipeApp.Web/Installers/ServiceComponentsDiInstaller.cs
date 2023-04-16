@@ -8,11 +8,13 @@ using RecipeApp.Domain.Repositories.NutrientRepository;
 using RecipeApp.Domain.Repositories.RecipeIngredientRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
 using RecipeApp.Domain.Repositories.RecipeStepRepository;
+using RecipeApp.Domain.Repositories.StoredIngredientRepository;
 using RecipeApp.Domain.Services.AppLogs.GetLogs;
 using RecipeApp.Domain.Services.DbManagement.CreateBackup;
 using RecipeApp.Domain.Services.DbManagement.RestoreDb;
 using RecipeApp.Domain.Services.Email.SendEmail;
 using RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients;
+using RecipeApp.Domain.Services.Recipe.IncludeIngredientsService;
 using RecipeApp.Domain.Services.User.CreateUser;
 using RecipeApp.Infrastructure.Persistance.Builders;
 using RecipeApp.Infrastructure.Persistance.Repositories.ExternalUserRepository;
@@ -22,9 +24,11 @@ using RecipeApp.Infrastructure.Persistance.Repositories.NutrientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.RecipeIngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.RecipeRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.RecipeStepRepository;
+using RecipeApp.Infrastructure.Persistance.Repositories.StoredIngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Services.AppLogs;
 using RecipeApp.Infrastructure.Persistance.Services.DbManagement;
 using RecipeApp.Infrastructure.Persistance.Services.FoodRecognition;
+using RecipeApp.Infrastructure.Persistance.Services.Recipe;
 
 namespace RecipeApp.Web.Installers
 {
@@ -42,6 +46,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IGetLogsService, GetLogsService>();
             services.AddTransient<IRestoreDbService, RestoreDbService>();
             services.AddTransient<ICreateBackupService, CreateBackupService>();
+            services.AddTransient<IIncludeIngredientsService, IncludeIngredientsService>();
 
             // builders
             services.AddTransient<IExternalUserQueryBuilder, ExternalUserQueryBuilder>();
@@ -56,6 +61,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IRecipeIngredientRepository, RecipeIngredientRepository>();
             services.AddTransient<INutrientRepository, NutrientRepository>();
             services.AddTransient<INutrientIngredientRepository, NutrientIngredientRepository>();
+            services.AddTransient<IStoredIngredientRepository, StoredIngredientRepository>();
 
             //clients
             services.AddHttpClient<IRecognizeIngredientsService, RecognizeIngredientsService>();

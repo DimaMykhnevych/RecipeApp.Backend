@@ -32,6 +32,10 @@ namespace RecipeApp.Application.Mappers
                                                })));
 
             CreateMap<Ingredient, IngredientDto>();
+            CreateMap<AddStoredIngredientDto, StoredIngredient>();
+            CreateMap<StoredIngredient, StoredIngredientDto>()
+                .ForMember(si => si.Name, m => m.MapFrom(i => i.Ingredient.Name))
+                .ForMember(si => si.Unit, m => m.MapFrom(i => i.Ingredient.Unit));
         }
     }
 }
