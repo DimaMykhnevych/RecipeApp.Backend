@@ -33,6 +33,7 @@ namespace RecipeApp.Infrastructure.Persistance.Repositories.StoredIngredientRepo
         {
             return await context.StoredIngredients
                 .Include(si => si.Ingredient)
+                .AsNoTracking()
                 .Where(si => si.AppUserId == userId)
                 .ToListAsync();
         }

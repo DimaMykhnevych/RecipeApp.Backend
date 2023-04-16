@@ -36,6 +36,13 @@ namespace RecipeApp.Application.Mappers
             CreateMap<StoredIngredient, StoredIngredientDto>()
                 .ForMember(si => si.Name, m => m.MapFrom(i => i.Ingredient.Name))
                 .ForMember(si => si.Unit, m => m.MapFrom(i => i.Ingredient.Unit));
+            CreateMap<UpdateFamilyDto, Family>();
+
+            CreateMap<Family, FamilyDto>();
+            CreateMap<FamilyMember, FamilyMemberDto>()
+                .ForMember(fm => fm.Name, m => m.MapFrom(m => m.ExternalUser.Name))
+                .ForMember(fm => fm.UserName, m => m.MapFrom(m => m.ExternalUser.UserName))
+                .ForMember(fm => fm.DOB, m => m.MapFrom(m => m.ExternalUser.DOB));
         }
     }
 }

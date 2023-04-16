@@ -27,6 +27,7 @@ namespace RecipeApp.Infrastructure.Persistance.Builders
         {
             _query = _dbContext.ExternalUsers
                 .Include(u => u.AppUser)
+                .AsNoTracking()
                 .Where(u => u.AppUser == null);
             return this;
         }

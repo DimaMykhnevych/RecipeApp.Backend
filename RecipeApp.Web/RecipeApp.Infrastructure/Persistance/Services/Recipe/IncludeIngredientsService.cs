@@ -22,6 +22,9 @@ namespace RecipeApp.Infrastructure.Persistance.Services.Recipe
             Dictionary<int, double> recipesMatchingPercentage = new();
             Dictionary<int, Domain.Entities.Recipe> matchingRecipes = new();
             double acceptableMatchIngredientsPercentage = setStoredIngredients.AcceptableMatchIngredientsPercentage ?? defaultAcceptableMatchIngredientsPercentage;
+            acceptableMatchIngredientsPercentage = acceptableMatchIngredientsPercentage < 0 
+                ? defaultAcceptableMatchIngredientsPercentage
+                : acceptableMatchIngredientsPercentage;
             bool considerIngredientsAmount = setStoredIngredients.ConsiderIngredientsAmount ?? true;
 
             if (storedIngredients != null && storedIngredients.Any())

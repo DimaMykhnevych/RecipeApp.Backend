@@ -26,8 +26,10 @@ namespace RecipeApp.Infrastructure.Persistance.Builders
         {
             _query = _dbContext.Recipes
                 .Include(r => r.RecipeSteps)
+                .AsNoTracking()
                 .Include(r => r.RecipeIngredients)
-                .ThenInclude(ri => ri.Ingredient);
+                .ThenInclude(ri => ri.Ingredient)
+                .AsNoTracking();
             return this;
         }
 

@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RecipeApp.Domain.Context;
 using RecipeApp.Domain.Entities;
 
 namespace RecipeApp.Infrastructure.Persistance.Context
 {
-    public class RecipeAppDbContext : IdentityDbContext<AppUser, UserRole, int>
+    public class RecipeAppDbContext : IdentityDbContext<AppUser, UserRole, int>, IRecipeAppDbContext
     {
         public RecipeAppDbContext(DbContextOptions<RecipeAppDbContext> options) : base(options)
         {

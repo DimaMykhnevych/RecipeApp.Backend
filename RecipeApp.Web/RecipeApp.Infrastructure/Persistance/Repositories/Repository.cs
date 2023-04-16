@@ -34,6 +34,15 @@ namespace RecipeApp.Infrastructure.Persistance.Repositories
             context.Set<TEntity>().Remove(entity);
         }
 
+        public async Task DeleteById(int id)
+        {
+            TEntity entity = await Get(id);
+            if (entity != null)
+            {
+                context.Set<TEntity>().Remove(entity);
+            }
+        }
+
         public async Task Update(TEntity entity)
         {
             context.Set<TEntity>().Update(entity);
