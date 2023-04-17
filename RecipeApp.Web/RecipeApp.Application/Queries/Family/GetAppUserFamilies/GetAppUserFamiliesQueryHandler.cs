@@ -38,7 +38,7 @@ namespace RecipeApp.Application.Queries.Family.GetAppUserFamilies
                 .ThenInclude(fm => fm.ExternalUser)
                 .AsNoTracking()
                 .Where(fm => appUserFamilies.Contains(fm.Id))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             return new GetFamiliesDto
             {

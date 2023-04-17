@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using RecipeApp.Application.Commands.ForbiddenNutrientN.AddForbiddenNutrient;
 using RecipeApp.Application.Commands.User.CreateUser;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Domain.Entities;
@@ -43,6 +44,12 @@ namespace RecipeApp.Application.Mappers
                 .ForMember(fm => fm.Name, m => m.MapFrom(m => m.ExternalUser.Name))
                 .ForMember(fm => fm.UserName, m => m.MapFrom(m => m.ExternalUser.UserName))
                 .ForMember(fm => fm.DOB, m => m.MapFrom(m => m.ExternalUser.DOB));
+
+            CreateMap<Nutrient, NutrientDto>();
+            CreateMap<AddForbiddenNutrientCommand, ForbiddenNutrient>();
+            CreateMap<ForbiddenNutrient, ForbiddenNutrientDto>()
+                .ForMember(fn => fn.Name, m => m.MapFrom(m => m.Nutrient.Name))
+                .ForMember(fn => fn.Unit, m => m.MapFrom(m => m.Nutrient.Unit));
         }
     }
 }

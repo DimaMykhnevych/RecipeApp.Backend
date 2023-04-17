@@ -5,6 +5,7 @@ using RecipeApp.Domain.Context;
 using RecipeApp.Domain.Repositories.ExternalUserRepository;
 using RecipeApp.Domain.Repositories.FamilyMemberRepository;
 using RecipeApp.Domain.Repositories.FamilyRepository;
+using RecipeApp.Domain.Repositories.ForbiddenNutrientRepository;
 using RecipeApp.Domain.Repositories.IngredientRepository;
 using RecipeApp.Domain.Repositories.NutrientIngredientRepository;
 using RecipeApp.Domain.Repositories.NutrientRepository;
@@ -29,6 +30,7 @@ using RecipeApp.Infrastructure.Persistance.Context;
 using RecipeApp.Infrastructure.Persistance.Repositories.ExternalUserRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.FamilyMemberRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.FamilyRepository;
+using RecipeApp.Infrastructure.Persistance.Repositories.ForbiddenNutrientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.IngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.NutrientIngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.NutrientRepository;
@@ -85,6 +87,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IStoredIngredientRepository, StoredIngredientRepository>();
             services.AddTransient<IFamilyRepository, FamilyRepository>();
             services.AddTransient<IFamilyMemberRepository, FamilyMemberRepository>();
+            services.AddTransient<IForbiddenNutrientRepository, ForbiddenNutrientRepository>();
 
             //clients
             services.AddHttpClient<IRecognizeIngredientsService, RecognizeIngredientsService>();
