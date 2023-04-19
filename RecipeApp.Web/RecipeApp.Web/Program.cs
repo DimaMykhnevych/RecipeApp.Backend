@@ -4,7 +4,9 @@ using RecipeApp.Web.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.InstallServices(builder.Configuration);
+builder.Services
+    .AddMemoryCache()
+    .InstallServices(builder.Configuration);
 
 var app = builder.Build();
 

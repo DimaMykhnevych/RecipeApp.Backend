@@ -7,5 +7,6 @@
         public const string ConnectionStrings = "ConnectionStrings";
         public const string EmailServiceOptions = "EmailServiceOptions";
         public const string RoboflowApiOptions = "RoboflowApiOptions";
+        public const string RecipeApiOptions = "RecipeApiOptions";
     }
 }

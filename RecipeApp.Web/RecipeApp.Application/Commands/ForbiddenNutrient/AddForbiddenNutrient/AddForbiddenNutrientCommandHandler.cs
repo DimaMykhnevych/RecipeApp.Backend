@@ -33,10 +33,6 @@ namespace RecipeApp.Application.Commands.ForbiddenNutrientN.AddForbiddenNutrient
             {
                 forbiddenNutrient.RequiredPercentageOfDailyNeeds = 0;
             }
-            else if (forbiddenNutrient.RequiredPercentageOfDailyNeeds > 100)
-            {
-                forbiddenNutrient.RequiredPercentageOfDailyNeeds = 100;
-            }
 
             try
             {

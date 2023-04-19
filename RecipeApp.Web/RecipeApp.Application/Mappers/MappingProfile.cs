@@ -50,6 +50,10 @@ namespace RecipeApp.Application.Mappers
             CreateMap<ForbiddenNutrient, ForbiddenNutrientDto>()
                 .ForMember(fn => fn.Name, m => m.MapFrom(m => m.Nutrient.Name))
                 .ForMember(fn => fn.Unit, m => m.MapFrom(m => m.Nutrient.Unit));
+
+            CreateMap<MealPlan, GetRecommendedMealPlanDto>();
+            CreateMap<MealPlanDay, RecommendedMealPlanDayDto>();
+            CreateMap<Ingestion, RecommendedMealPlanDayIngestionDto>();
         }
     }
 }

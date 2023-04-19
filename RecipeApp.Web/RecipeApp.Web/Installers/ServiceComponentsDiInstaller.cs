@@ -1,6 +1,7 @@
 ﻿using RecipeApp.Application.Factories;
 using RecipeApp.Application.Services.AuthorizationService;
 using RecipeApp.Domain.Builders;
+using RecipeApp.Domain.Clients.RecipeApiClient;
 using RecipeApp.Domain.Context;
 using RecipeApp.Domain.Repositories.ExternalUserRepository;
 using RecipeApp.Domain.Repositories.FamilyMemberRepository;
@@ -23,9 +24,11 @@ using RecipeApp.Domain.Services.FamilyMemberN.AddFamilyMemberService;
 using RecipeApp.Domain.Services.FamilyMemberN.DeleteFamilyMemberService;
 using RecipeApp.Domain.Services.FamilyMemberN.UpdateFamilyMemberService;
 using RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients;
+using RecipeApp.Domain.Services.MealPlan.MealPlanRecommendationService;
 using RecipeApp.Domain.Services.Recipe.IncludeIngredientsService;
 using RecipeApp.Domain.Services.User.CreateUser;
 using RecipeApp.Infrastructure.Persistance.Builders;
+using RecipeApp.Infrastructure.Persistance.Clients.RecipeApiClientN;
 using RecipeApp.Infrastructure.Persistance.Context;
 using RecipeApp.Infrastructure.Persistance.Repositories.ExternalUserRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.FamilyMemberRepository;
@@ -43,6 +46,7 @@ using RecipeApp.Infrastructure.Persistance.Services.DbManagement;
 using RecipeApp.Infrastructure.Persistance.Services.Family;
 using RecipeApp.Infrastructure.Persistance.Services.FamilyMemberN;
 using RecipeApp.Infrastructure.Persistance.Services.FoodRecognition;
+using RecipeApp.Infrastructure.Persistance.Services.MealPlan;
 using RecipeApp.Infrastructure.Persistance.Services.Recipe;
 
 namespace RecipeApp.Web.Installers
@@ -70,6 +74,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IAddFamilyMemberService, AddFamilyMemberService>();
             services.AddTransient<IUpdateFamilyMemberService, UpdateFamilyMemberService>();
             services.AddTransient<IDeleteFamilyMemberService, DeleteFamilyMemberService>();
+            services.AddTransient<IMealPlanRecommendationService, MealPlanRecommendationService>();
 
             // builders
             services.AddTransient<IExternalUserQueryBuilder, ExternalUserQueryBuilder>();
@@ -91,6 +96,7 @@ namespace RecipeApp.Web.Installers
 
             //clients
             services.AddHttpClient<IRecognizeIngredientsService, RecognizeIngredientsService>();
+            services.AddHttpClient<IRecipeApiClient, RecipeApiClient>();
         }
     }
 }

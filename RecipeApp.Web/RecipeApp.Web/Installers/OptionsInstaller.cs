@@ -10,6 +10,7 @@ namespace RecipeApp.Web.Installers
             services.Configure<MySqlConfigOptions>(configuration.GetSection(ConfigurationKeys.ConnectionStrings));
             services.Configure<EmailServiceOptions>(configuration.GetSection(ConfigurationKeys.EmailServiceOptions));
             services.Configure<RoboflowApiOptions>(configuration.GetSection(ConfigurationKeys.RoboflowApiOptions));
+            services.Configure<RecipeApiOptions>(configuration.GetSection(ConfigurationKeys.RecipeApiOptions));
         }
     }
 }
