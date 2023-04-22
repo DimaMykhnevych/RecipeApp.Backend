@@ -1,4 +1,5 @@
 using RecipeApp.Web.Extensions;
+using RecipeApp.Web.Middleware;
 using RecipeApp.Web.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,8 @@ builder.Services
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 SwaggerOptions swaggerOptions = new ();
 builder.Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
 
