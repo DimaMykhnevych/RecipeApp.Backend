@@ -2,6 +2,7 @@
 {
     public static class ConfigurationKeys
     {
+        public const string ApplicationInsightsConnectionString = "APPLICATIONINSIGHTS_CONNECTION_STRING";
         public const string EmailConfirmationEnabled = "EmailConfirmationEnabled";
         public const string DefaultConnectionString = "ConnectionStrings:Default";
         public const string ConnectionStrings = "ConnectionStrings";

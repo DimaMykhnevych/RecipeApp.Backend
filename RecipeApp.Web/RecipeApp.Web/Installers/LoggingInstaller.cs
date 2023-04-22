@@ -1,4 +1,7 @@
-﻿namespace RecipeApp.Web.Installers
+﻿using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using RecipeApp.Domain.Constants;
+
+namespace RecipeApp.Web.Installers
 {
     public class LoggingInstaller : IInstaller
     {
@@ -10,6 +13,12 @@
                 loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
                 loggingBuilder.AddConsole();
                 loggingBuilder.AddDebug();
+            });
+
+            services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
+            {
+                ConnectionString = configuration[ConfigurationKeys.ApplicationInsightsConnectionString],
+                EnableActiveTelemetryConfigurationSetup = true
             });
         }
     }
