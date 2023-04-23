@@ -5,26 +5,21 @@ using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Models;
 using RecipeApp.Domain.Repositories.ExternalUserRepository;
 using RecipeApp.Domain.Repositories.ForbiddenNutrientRepository;
+using RecipeApp.Domain.Repositories.NutrientRecipeRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
 using RecipeApp.Domain.Services.MealPlan.MealPlanRecommendationService;
 using RecipeApp.Infrastructure.Constants;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
 {
     public class MealPlanRecommendationService : IMealPlanRecommendationService
     {
-        // TODO change cacheExpirationHours to 24 for release version
-        private const int cacheExpirationHours = 1024;
+        private const int cacheExpirationMinutes = 20;
         private const int defaultMealPlanDaysCount = 7;
-        private readonly string _recipeNutrientsCachePath = Path.Combine(
-            @$"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}",
-               @"RecipeApp\Cache");
         private readonly IRecipeRepository _recipeRepository;
         private readonly IForbiddenNutrientRepository _forbiddenNutrientRepository;
         private readonly IExternalUserRepository _externalUserRepository;
-        private readonly IRecipeApiClient _recipeApiClient;
+        private readonly INutrientRecipeRepository _nutrientRecipeRepository;
         private readonly IMemoryCache _memoryCache;
         private readonly ILogger _logger;
         private static readonly SemaphoreSlim getRecipesSemaphore = new(1, 1);
@@ -33,20 +28,22 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
             IRecipeRepository recipeRepository,
             IForbiddenNutrientRepository forbiddenNutrientRepository,
             IExternalUserRepository externalUserRepository,
-            IRecipeApiClient recipeApiClient,
+            INutrientRecipeRepository nutrientRecipeRepository,
             IMemoryCache memoryCache,
             ILoggerFactory loggerFactory)
         {
             _recipeRepository = recipeRepository;
             _forbiddenNutrientRepository = forbiddenNutrientRepository;
             _externalUserRepository = externalUserRepository;
-            _recipeApiClient = recipeApiClient;
+            _nutrientRecipeRepository = nutrientRecipeRepository;
             _memoryCache = memoryCache;
             _logger = loggerFactory?.CreateLogger(nameof(MealPlanRecommendationService));
         }
 
         public async Task<Domain.Entities.MealPlan> GetRecommendedMealPlan(int appUserId, int externalUserId)
         {
+            _logger.LogInformation("Getting meal plan recommendation for user with External Id: {ExternalUserId}", externalUserId);
+
             ExternalUser externalUser = await _externalUserRepository.Get(externalUserId);
             if (externalUser == null)
             {
@@ -55,10 +52,13 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
 
             IEnumerable<Domain.Entities.Recipe> recipes = await GetCachedRecipes();
             IEnumerable<ForbiddenNutrient> forbiddenNutrients = await _forbiddenNutrientRepository.GetUserForbiddenNutrients(externalUserId);
-            IEnumerable<RecipeNutrients> recipeNutrition = await GetRecipesNutrition(recipes);
+            IEnumerable<NutrientRecipe> recipeNutrients = await _nutrientRecipeRepository.GetRecipeNutrients();
+
+            IEnumerable<RecipeNutrients> recipeNutrition = GetRecipesNutrition(recipes, recipeNutrients);
 
             List<MealPlanNutrients> mealPlans = new();
 
+            _logger.LogDebug("Making all possible combinations of dishes");
             foreach (var breakfast in recipes
                 .Where(r => r.DishType == DishType.Breakfast || r.DishType == DishType.Any))
             {
@@ -86,6 +86,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
                 }
             }
 
+            _logger.LogDebug("Filtering meal plans by user's nutrients limitations");
             List<MealPlanNutrients> filteredMealPlans = new();
 
             foreach (var plan in mealPlans)
@@ -107,6 +108,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
                 }
             }
 
+            _logger.LogDebug("Building meal plan");
             Domain.Entities.MealPlan resultMealPlan = new()
             {
                 AppUserId = appUserId,
@@ -180,77 +182,33 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
             return mealPlanDays;
         }
 
-        private async Task<IEnumerable<RecipeNutrients>> GetRecipesNutrition(IEnumerable<Domain.Entities.Recipe> recipes)
+        private static IEnumerable<RecipeNutrients> GetRecipesNutrition(
+            IEnumerable<Domain.Entities.Recipe> recipes,
+            IEnumerable<NutrientRecipe> storedRecipeNutrients)
         {
-            var recipesNutritionCachePath = Path.Combine(_recipeNutrientsCachePath, $"RecipesNutrients-{DateTime.Now:yyyy-MM}.json");
-            if (!Directory.Exists(_recipeNutrientsCachePath))
-            {
-                Directory.CreateDirectory(_recipeNutrientsCachePath);
-            }
-
-            if (File.Exists(recipesNutritionCachePath))
-            {
-                FileInfo fileInfo = new(recipesNutritionCachePath);
-                var expirationTimeSpan = DateTime.Now - fileInfo.LastWriteTime;
-                if (expirationTimeSpan.TotalHours <= cacheExpirationHours)
-                {
-                    var content = await File.ReadAllTextAsync(recipesNutritionCachePath);
-                    return JsonSerializer.Deserialize<IEnumerable<RecipeNutrients>>(content);
-                }
-            }
-
             List<RecipeNutrients> recipesNutrients = new();
             foreach (var recipe in recipes)
             {
-                RecipeNutrients recipeNutrients = await GetRecipeNutrition(recipe);
-                recipesNutrients.Add(recipeNutrients);
-            }
-
-            var jsonSerializationSettings = JsonSerializer.Serialize(recipesNutrients, new JsonSerializerOptions
-            {
-                ReferenceHandler = ReferenceHandler.IgnoreCycles
-            });
-            await File.WriteAllTextAsync(recipesNutritionCachePath, jsonSerializationSettings);
-            return recipesNutrients;
-        }
-
-        private async Task<RecipeNutrients> GetRecipeNutrition(Domain.Entities.Recipe recipe)
-        {
-            List<RecipeNutrient> nutrients = new();
-            RecipeNutrients recipeNutrients = new() { Recipe = recipe, Nutrients = nutrients };
-            double recipeWeight = 0;
-            foreach (var ingredient in recipe.RecipeIngredients)
-            {
-                double ingredientAmountGrams = await CalculateIngredientAmountInGrams(ingredient);
-                recipeWeight += ingredientAmountGrams;
-                foreach (var nutrientIngredient in ingredient.Ingredient.NutrientIngredients)
+                RecipeNutrients recipeNutrientsModel = new()
                 {
-                    var nutrientUnit = nutrientIngredient.Nutrient.Unit;
-                    RecipeNutrient existingRecipeNutrient = nutrients.FirstOrDefault(n => n.Id == nutrientIngredient.Nutrient.Id);
-                    RecipeNutrient recipeNutrient = existingRecipeNutrient ?? new()
+                    Recipe = recipe,
+                };
+                var currentRecipeStoredNutrients = storedRecipeNutrients.Where(rn => rn.RecipeId == recipe.Id);
+                var currentRecipeNutrientsModel = currentRecipeStoredNutrients
+                    .Select(rn => new RecipeNutrient
                     {
-                        Id = nutrientIngredient.Nutrient.Id,
-                        Name = nutrientIngredient.Nutrient.Name,
-                        Unit = nutrientUnit
-                    };
+                        Id = rn.NutrientId,
+                        Name = rn.Nutrient.Name,
+                        Unit = rn.Nutrient.Unit,
+                        Amount = rn.Amount,
+                        PercentOfDailyNeeds = rn.PercentOfDailyNeeds,
+                    });
+                recipeNutrientsModel.Nutrients = currentRecipeNutrientsModel;
 
-                    recipeNutrient.Amount += nutrientIngredient.Amount * ingredientAmountGrams / 100;
-                    recipeNutrient.PercentOfDailyNeeds = recipeNutrient.Amount * nutrientIngredient.PercentOfDailyNeeds / nutrientIngredient.Amount;
-
-                    if (existingRecipeNutrient == null)
-                    {
-                        nutrients.Add(recipeNutrient);
-                    }
-                }
+                recipesNutrients.Add(recipeNutrientsModel);
             }
 
-            foreach (var nutrient in nutrients)
-            {
-                var nutrientAmountPerPortion = nutrient.Amount / recipe.Servings;
-                nutrient.PercentOfDailyNeeds = nutrientAmountPerPortion * nutrient.PercentOfDailyNeeds / nutrient.Amount;
-            }
-
-            return recipeNutrients;
+            return recipesNutrients;
         }
 
         private static List<RecipeNutrient> MergeNutrients(params RecipeNutrients[] recipeNutrients)
@@ -273,38 +231,6 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
             return totalNutrients;
         }
 
-        private async Task<double> CalculateIngredientAmountInGrams(RecipeIngredient recipeIngredient)
-        {
-            switch (recipeIngredient.Ingredient.Unit)
-            {
-                case Unit.Grams:
-                    return recipeIngredient.Amount;
-                case Unit.Kilograms:
-                    return recipeIngredient.Amount * 1000;
-                case Unit.Milligrams:
-                    return recipeIngredient.Amount / 1000;
-                case Unit.Micrograms:
-                    return recipeIngredient.Amount / 1000_000;
-                default:
-                    var conversionResult = await _recipeApiClient.Convert(
-                        new IngredientConversionParameters
-                        {
-                            IngredientName = recipeIngredient.Ingredient.Name,
-                            SourceAmount = recipeIngredient.Amount,
-                            SourceUnit = recipeIngredient.Ingredient.Unit == Unit.Milliliters ? "ml" : "l",
-                            TargetUnit = "g"
-                        });
-
-                    if (conversionResult == null || conversionResult.TargetAmount == null)
-                    {
-                        return recipeIngredient.Ingredient.Unit == Unit.Milliliters ?
-                            recipeIngredient.Amount : recipeIngredient.Amount * 1000;
-                    }
-
-                    return conversionResult.TargetAmount.Value;
-            }
-        }
-
         private async Task<IEnumerable<Domain.Entities.Recipe>> GetCachedRecipes()
         {
             bool isRecipesAvaiable = _memoryCache.TryGetValue(CacheKeys.Recipes, out IEnumerable<Domain.Entities.Recipe> recipes);
@@ -325,7 +251,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
                 recipes = await _recipeRepository.GetRecipesWithNutritionInfo();
                 var cacheEntryOptions = new MemoryCacheEntryOptions
                 {
-                    AbsoluteExpiration = DateTime.Now.AddHours(cacheExpirationHours),
+                    AbsoluteExpiration = DateTime.Now.AddMinutes(cacheExpirationMinutes),
                     Size = 1024,
                 };
                 _memoryCache.Set(CacheKeys.Recipes, recipes, cacheEntryOptions);

@@ -11,12 +11,12 @@ namespace RecipeApp.Infrastructure.Persistance.Repositories.NutrientRecipeReposi
         {
         }
 
-        public async Task<bool> NutrientRecipeExists(int recipeId, int nutrientId)
+        public async Task<IEnumerable<NutrientRecipe>> GetRecipeNutrients()
         {
-            var nutrient = await context.NutrientRecipes
-                .FirstOrDefaultAsync(nr => nr.RecipeId == recipeId && nr.NutrientId == nutrientId);
-
-            return nutrient != null;
+            return await context.NutrientRecipes
+                .Include(x => x.Nutrient)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<bool> NutrientsForRecipeExist(int recipeId)
