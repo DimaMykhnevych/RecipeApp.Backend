@@ -20,5 +20,6 @@
         public ICollection<MealPlanDay> MealPlanDays { get; set; }
         public ICollection<RecipeStep> RecipeSteps { get; set; }
         public ICollection<RecipeIngredient> RecipeIngredients { get; set; }
+        public ICollection<NutrientRecipe> NutrientRecipes { get; set; }
     }
 }

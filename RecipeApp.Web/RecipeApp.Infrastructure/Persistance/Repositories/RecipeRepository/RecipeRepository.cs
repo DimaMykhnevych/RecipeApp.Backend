@@ -28,5 +28,18 @@ namespace RecipeApp.Infrastructure.Persistance.Repositories.RecipeRepository
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task<Recipe> GetRecipeWithNutritionInfo(int id)
+        {
+            return await context.Recipes
+                .Include(r => r.RecipeSteps)
+                .AsNoTracking()
+                .Include(r => r.RecipeIngredients)
+                .ThenInclude(ri => ri.Ingredient)
+                .ThenInclude(i => i.NutrientIngredients)
+                .ThenInclude(ni => ni.Nutrient)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(r => r.Id == id);
+        }
     }
 }

@@ -26,6 +26,7 @@ namespace RecipeApp.Infrastructure.Persistance.Context
         public DbSet<StoredIngredient> StoredIngredients { get; set; }
         public DbSet<Nutrient> Nutrients { get; set; }
         public DbSet<NutrientIngredient> NutrientIngredients { get; set; }
+        public DbSet<NutrientRecipe> NutrientRecipes { get; set; }
         public DbSet<ForbiddenNutrient> ForbiddenNutrients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

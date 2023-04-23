@@ -9,6 +9,7 @@ using RecipeApp.Domain.Repositories.FamilyRepository;
 using RecipeApp.Domain.Repositories.ForbiddenNutrientRepository;
 using RecipeApp.Domain.Repositories.IngredientRepository;
 using RecipeApp.Domain.Repositories.NutrientIngredientRepository;
+using RecipeApp.Domain.Repositories.NutrientRecipeRepository;
 using RecipeApp.Domain.Repositories.NutrientRepository;
 using RecipeApp.Domain.Repositories.RecipeIngredientRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
@@ -25,6 +26,7 @@ using RecipeApp.Domain.Services.FamilyMemberN.DeleteFamilyMemberService;
 using RecipeApp.Domain.Services.FamilyMemberN.UpdateFamilyMemberService;
 using RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients;
 using RecipeApp.Domain.Services.MealPlan.MealPlanRecommendationService;
+using RecipeApp.Domain.Services.Recipe.AddRecipeNutritionService;
 using RecipeApp.Domain.Services.Recipe.IncludeIngredientsService;
 using RecipeApp.Domain.Services.User.CreateUser;
 using RecipeApp.Infrastructure.Persistance.Builders;
@@ -36,6 +38,7 @@ using RecipeApp.Infrastructure.Persistance.Repositories.FamilyRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.ForbiddenNutrientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.IngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.NutrientIngredientRepository;
+using RecipeApp.Infrastructure.Persistance.Repositories.NutrientRecipeRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.NutrientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.RecipeIngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.RecipeRepository;
@@ -75,6 +78,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IUpdateFamilyMemberService, UpdateFamilyMemberService>();
             services.AddTransient<IDeleteFamilyMemberService, DeleteFamilyMemberService>();
             services.AddTransient<IMealPlanRecommendationService, MealPlanRecommendationService>();
+            services.AddTransient<IAddRecipeNutritionService, AddRecipeNutritionService>();
 
             // builders
             services.AddTransient<IExternalUserQueryBuilder, ExternalUserQueryBuilder>();
@@ -93,6 +97,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IFamilyRepository, FamilyRepository>();
             services.AddTransient<IFamilyMemberRepository, FamilyMemberRepository>();
             services.AddTransient<IForbiddenNutrientRepository, ForbiddenNutrientRepository>();
+            services.AddTransient<INutrientRecipeRepository, NutrientRecipeRepository>();
 
             //clients
             services.AddHttpClient<IRecognizeIngredientsService, RecognizeIngredientsService>();

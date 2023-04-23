@@ -6,5 +6,6 @@ namespace RecipeApp.Domain.Repositories.RecipeRepository
     {
         Task<Recipe> GetRecipeByTitle(string title);
         Task<IEnumerable<Recipe>> GetRecipesWithNutritionInfo();
+        Task<Recipe> GetRecipeWithNutritionInfo(int id);
     }
 }
