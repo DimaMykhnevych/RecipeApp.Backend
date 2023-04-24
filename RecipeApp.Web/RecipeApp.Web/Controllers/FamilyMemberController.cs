@@ -32,7 +32,7 @@ namespace RecipeApp.Web.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during saving users's family member")]
-        public async Task<IActionResult> AddFamily([FromBody] AddFamilyMemberDto addFamilyMemberDto)
+        public async Task<IActionResult> AddFamilyMember([FromBody] AddFamilyMemberDto addFamilyMemberDto)
         {
             AddFamilyMemberCommand addFamilyMemberCommand = new()
             {
@@ -56,7 +56,7 @@ namespace RecipeApp.Web.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during updating users's family member")]
-        public async Task<IActionResult> UpdateFamily([FromBody] UpdateFamilyMemberDto updateFamilyMemberDto)
+        public async Task<IActionResult> UpdateFamilyMember([FromBody] UpdateFamilyMemberDto updateFamilyMemberDto)
         {
             UpdateFamilyMemberCommand updateFamilyMemberCommand = new()
             {
@@ -73,7 +73,7 @@ namespace RecipeApp.Web.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during deleting users's family member")]
-        public async Task<IActionResult> DeleteFamily(int familyMemberId)
+        public async Task<IActionResult> DeleteFamilyMember(int familyMemberId)
         {
             DeleteFamilyMemberCommand deleteFamilyMemberCommand = new()
             {

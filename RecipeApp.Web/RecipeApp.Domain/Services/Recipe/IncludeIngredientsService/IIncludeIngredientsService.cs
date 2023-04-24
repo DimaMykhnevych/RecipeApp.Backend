@@ -1,6 +1,6 @@
 ﻿using RecipeApp.Domain.Models;
 
-namespace RecipeApp.Domain.Services.Recipe.IncludeIngredientsService
+namespace RecipeApp.Domain.Services.RecipeN.IncludeIngredientsService
 {
     public interface IIncludeIngredientsService
     {

@@ -5,7 +5,7 @@ using RecipeApp.Application.DTOs;
 using RecipeApp.Domain.Builders;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Models;
-using RecipeApp.Domain.Services.Recipe.IncludeIngredientsService;
+using RecipeApp.Domain.Services.RecipeN.IncludeIngredientsService;
 
 namespace RecipeApp.Application.Queries.RecipeN.GetRecipes
 {

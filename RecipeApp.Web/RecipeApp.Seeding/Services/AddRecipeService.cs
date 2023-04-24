@@ -2,7 +2,7 @@
 using RecipeApp.Domain.Repositories.IngredientRepository;
 using RecipeApp.Domain.Repositories.NutrientRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
-using RecipeApp.Domain.Services.Recipe.AddRecipeNutritionService;
+using RecipeApp.Domain.Services.RecipeN.AddRecipeNutritionService;
 using RecipeApp.Seeding.ApiClients;
 using RecipeApp.Seeding.ApiModels;
 

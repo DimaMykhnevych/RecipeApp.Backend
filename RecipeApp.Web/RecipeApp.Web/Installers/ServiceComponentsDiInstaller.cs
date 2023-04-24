@@ -27,8 +27,9 @@ using RecipeApp.Domain.Services.FamilyMemberN.DeleteFamilyMemberService;
 using RecipeApp.Domain.Services.FamilyMemberN.UpdateFamilyMemberService;
 using RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients;
 using RecipeApp.Domain.Services.MealPlan.MealPlanRecommendationService;
-using RecipeApp.Domain.Services.Recipe.AddRecipeNutritionService;
-using RecipeApp.Domain.Services.Recipe.IncludeIngredientsService;
+using RecipeApp.Domain.Services.RecipeN.AddRecipeNutritionService;
+using RecipeApp.Domain.Services.RecipeN.DeleteRecipeService;
+using RecipeApp.Domain.Services.RecipeN.IncludeIngredientsService;
 using RecipeApp.Domain.Services.User.CreateUser;
 using RecipeApp.Infrastructure.Persistance.Builders;
 using RecipeApp.Infrastructure.Persistance.Clients.RecipeApiClientN;
@@ -52,7 +53,7 @@ using RecipeApp.Infrastructure.Persistance.Services.Family;
 using RecipeApp.Infrastructure.Persistance.Services.FamilyMemberN;
 using RecipeApp.Infrastructure.Persistance.Services.FoodRecognition;
 using RecipeApp.Infrastructure.Persistance.Services.MealPlan;
-using RecipeApp.Infrastructure.Persistance.Services.Recipe;
+using RecipeApp.Infrastructure.Persistance.Services.RecipeN;
 
 namespace RecipeApp.Web.Installers
 {
@@ -81,6 +82,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IDeleteFamilyMemberService, DeleteFamilyMemberService>();
             services.AddTransient<IMealPlanRecommendationService, MealPlanRecommendationService>();
             services.AddTransient<IAddRecipeNutritionService, AddRecipeNutritionService>();
+            services.AddTransient<IDeleteRecipeService, DeleteRecipeService>();
 
             // builders
             services.AddTransient<IExternalUserQueryBuilder, ExternalUserQueryBuilder>();

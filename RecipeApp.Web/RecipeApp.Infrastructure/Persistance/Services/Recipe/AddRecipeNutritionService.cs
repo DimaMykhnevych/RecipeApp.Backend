@@ -4,9 +4,9 @@ using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Models;
 using RecipeApp.Domain.Repositories.NutrientRecipeRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
-using RecipeApp.Domain.Services.Recipe.AddRecipeNutritionService;
+using RecipeApp.Domain.Services.RecipeN.AddRecipeNutritionService;
 
-namespace RecipeApp.Infrastructure.Persistance.Services.Recipe
+namespace RecipeApp.Infrastructure.Persistance.Services.RecipeN
 {
     public class AddRecipeNutritionService : IAddRecipeNutritionService
     {

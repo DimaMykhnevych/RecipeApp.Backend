@@ -1,4 +1,4 @@
-﻿namespace RecipeApp.Domain.Services.Recipe.AddRecipeNutritionService
+﻿namespace RecipeApp.Domain.Services.RecipeN.AddRecipeNutritionService
 {
     public interface IAddRecipeNutritionService
     {

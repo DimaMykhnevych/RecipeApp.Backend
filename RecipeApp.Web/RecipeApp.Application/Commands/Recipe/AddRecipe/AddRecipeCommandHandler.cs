@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Repositories.RecipeRepository;
-using RecipeApp.Domain.Services.Recipe.AddRecipeNutritionService;
+using RecipeApp.Domain.Services.RecipeN.AddRecipeNutritionService;
 
 namespace RecipeApp.Application.Commands.RecipeN.AddRecipe
 {

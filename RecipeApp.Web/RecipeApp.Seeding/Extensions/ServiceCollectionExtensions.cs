@@ -9,7 +9,7 @@ using RecipeApp.Domain.Repositories.NutrientRepository;
 using RecipeApp.Domain.Repositories.RecipeIngredientRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
 using RecipeApp.Domain.Repositories.RecipeStepRepository;
-using RecipeApp.Domain.Services.Recipe.AddRecipeNutritionService;
+using RecipeApp.Domain.Services.RecipeN.AddRecipeNutritionService;
 using RecipeApp.Infrastructure.Persistance.Context;
 using RecipeApp.Infrastructure.Persistance.Repositories.IngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.NutrientIngredientRepository;
@@ -18,7 +18,7 @@ using RecipeApp.Infrastructure.Persistance.Repositories.NutrientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.RecipeIngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.RecipeRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.RecipeStepRepository;
-using RecipeApp.Infrastructure.Persistance.Services.Recipe;
+using RecipeApp.Infrastructure.Persistance.Services.RecipeN;
 using RecipeApp.Seeding.Configuration;
 using System.Text.Json;
 
