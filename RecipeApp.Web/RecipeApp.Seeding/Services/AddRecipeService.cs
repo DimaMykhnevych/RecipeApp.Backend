@@ -2,6 +2,7 @@
 using RecipeApp.Domain.Repositories.IngredientRepository;
 using RecipeApp.Domain.Repositories.NutrientRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
+using RecipeApp.Domain.Services.Recipe.AddRecipeNutritionService;
 using RecipeApp.Seeding.ApiClients;
 using RecipeApp.Seeding.ApiModels;
 
@@ -13,16 +14,19 @@ namespace RecipeApp.Seeding.Services
         private readonly IRecipeRepository _recipeRepository;
         private readonly IIngredientRepository _ingredientRepository;
         private readonly INutrientRepository _nutrientRepository;
+        private readonly IAddRecipeNutritionService _addRecipeNutritionService;
         public AddRecipeService(
             IRecipeApiClient recipeApiClient,
             IRecipeRepository recipeRepository,
             IIngredientRepository ingredientRepository,
-            INutrientRepository nutrientRepository)
+            INutrientRepository nutrientRepository,
+            IAddRecipeNutritionService addRecipeNutritionService)
         {
             _recipeApiClient = recipeApiClient;
             _recipeRepository = recipeRepository;
             _ingredientRepository = ingredientRepository;
             _nutrientRepository = nutrientRepository;
+            _addRecipeNutritionService = addRecipeNutritionService;
         }
 
         public async Task AddRecipe(RecipeDto recipeDto)
@@ -79,8 +83,9 @@ namespace RecipeApp.Seeding.Services
                 recipe.RecipeIngredients.Add(recipeIngredient);
             }
 
-            await _recipeRepository.Insert(recipe);
+            var insertedRecipe = await _recipeRepository.Insert(recipe);
             await _recipeRepository.Save();
+            await _addRecipeNutritionService.AddRecipeNutrition(insertedRecipe.Id);
         }
 
         private async Task<List<NutrientIngredient>> GetIngredientNutrients(int ingredientId)

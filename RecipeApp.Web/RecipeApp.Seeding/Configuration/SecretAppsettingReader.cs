@@ -6,15 +6,19 @@ namespace RecipeApp.Seeding.Configuration
     {
         public T ReadSection<T>(string sectionName)
         {
+            var configurationRoot = GetConfiguration();
+            return configurationRoot.GetSection(sectionName).Get<T>();
+        }
+
+        public static IConfiguration GetConfiguration()
+        {
             var environment = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT");
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{environment}.json", optional: true)
                 .AddUserSecrets<Program>()
                 .AddEnvironmentVariables();
-            var configurationRoot = builder.Build();
-
-            return configurationRoot.GetSection(sectionName).Get<T>();
+            return builder.Build();
         }
     }
 }
