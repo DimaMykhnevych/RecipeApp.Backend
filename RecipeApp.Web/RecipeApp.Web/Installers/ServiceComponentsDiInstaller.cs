@@ -8,6 +8,7 @@ using RecipeApp.Domain.Repositories.FamilyMemberRepository;
 using RecipeApp.Domain.Repositories.FamilyRepository;
 using RecipeApp.Domain.Repositories.ForbiddenNutrientRepository;
 using RecipeApp.Domain.Repositories.IngredientRepository;
+using RecipeApp.Domain.Repositories.MealPlanRepository;
 using RecipeApp.Domain.Repositories.NutrientIngredientRepository;
 using RecipeApp.Domain.Repositories.NutrientRecipeRepository;
 using RecipeApp.Domain.Repositories.NutrientRepository;
@@ -37,6 +38,7 @@ using RecipeApp.Infrastructure.Persistance.Repositories.FamilyMemberRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.FamilyRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.ForbiddenNutrientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.IngredientRepository;
+using RecipeApp.Infrastructure.Persistance.Repositories.MealPlanRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.NutrientIngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.NutrientRecipeRepository;
 using RecipeApp.Infrastructure.Persistance.Repositories.NutrientRepository;
@@ -84,6 +86,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IExternalUserQueryBuilder, ExternalUserQueryBuilder>();
             services.AddTransient<IAppUserQueryBuilder, AppUserQueryBuilder>();
             services.AddTransient<IRecipeQueryBuilder, RecipeQueryBuilder>();
+            services.AddTransient<IMealPlanQueryBuilder, MealPlanQueryBuilder>();
 
             // repositories
             services.AddTransient<IExternalUserRepository, ExternalUserRepository>();
@@ -98,6 +101,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IFamilyMemberRepository, FamilyMemberRepository>();
             services.AddTransient<IForbiddenNutrientRepository, ForbiddenNutrientRepository>();
             services.AddTransient<INutrientRecipeRepository, NutrientRecipeRepository>();
+            services.AddTransient<IMealPlanRepository, MealPlanRepository>();
 
             //clients
             services.AddHttpClient<IRecognizeIngredientsService, RecognizeIngredientsService>();

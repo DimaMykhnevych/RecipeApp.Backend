@@ -57,6 +57,14 @@ namespace RecipeApp.Application.Mappers
             CreateMap<MealPlan, GetRecommendedMealPlanDto>();
             CreateMap<MealPlanDay, RecommendedMealPlanDayDto>();
             CreateMap<Ingestion, RecommendedMealPlanDayIngestionDto>();
+
+            CreateMap<AddMealPlanDto, MealPlan>();
+            CreateMap<AddMealPlanDayDto, MealPlanDay>();
+            CreateMap<AddIngestionDto, Ingestion>();
+
+            CreateMap<MealPlan, GetMealPlanDto>();
+            CreateMap<MealPlanDay, GetMealPlanDayDto>();
+            CreateMap<Ingestion, GetIngestionDto>();
         }
     }
 }
