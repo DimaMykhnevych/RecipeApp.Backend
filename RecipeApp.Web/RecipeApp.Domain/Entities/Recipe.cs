@@ -16,7 +16,9 @@
         public int Servings { get; set; }
         public string Summary { get; set; }
         public DishType DishType { get; set; }
+        public int? AppUserId { get; set; }
 
+        public AppUser AppUser { get; set; }
         public ICollection<MealPlanDay> MealPlanDays { get; set; }
         public ICollection<RecipeStep> RecipeSteps { get; set; }
         public ICollection<RecipeIngredient> RecipeIngredients { get; set; }
