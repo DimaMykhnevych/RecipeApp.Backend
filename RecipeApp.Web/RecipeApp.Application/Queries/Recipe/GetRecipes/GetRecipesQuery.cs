@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using RecipeApp.Application.DTOs;
 
-namespace RecipeApp.Application.Queries.Recipe.GetRecipes
+namespace RecipeApp.Application.Queries.RecipeN.GetRecipes
 {
     public class GetRecipesQuery : IRequest<GetRecipesDto>
     {

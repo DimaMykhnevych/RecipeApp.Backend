@@ -22,6 +22,16 @@ namespace RecipeApp.Infrastructure.Persistance.Builders
             return result;
         }
 
+        public IRecipeQueryBuilder SetRecipeCreatorId(int? userId)
+        {
+            if (userId != null)
+            {
+                _query = _query.Where(r => r.AppUserId == userId);
+            }
+
+            return this;
+        }
+
         public IRecipeQueryBuilder SetBaseRecipeInfo()
         {
             _query = _dbContext.Recipes

@@ -3,10 +3,11 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Domain.Builders;
+using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Models;
 using RecipeApp.Domain.Services.Recipe.IncludeIngredientsService;
 
-namespace RecipeApp.Application.Queries.Recipe.GetRecipes
+namespace RecipeApp.Application.Queries.RecipeN.GetRecipes
 {
     public class GetRecipesQueryHandler : IRequestHandler<GetRecipesQuery, GetRecipesDto>
     {
@@ -46,13 +47,19 @@ namespace RecipeApp.Application.Queries.Recipe.GetRecipes
                 .SetSeason(request.RecipesFiltering.Season)
                 .SetDishType(request.RecipesFiltering.DishType);
 
+            if (request.RecipesFiltering.GetUserCreatedRecipesOnly != null 
+                && request.RecipesFiltering.GetUserCreatedRecipesOnly.Value)
+            {
+                recipeBaseQuery.SetRecipeCreatorId(request.UserId);
+            }
+
             // TODO get user's forbidden ingredients (possibly for certain family members)
             if (request.RecipesFiltering.ExcludeForbiddenIngredients.HasValue && request.RecipesFiltering.ExcludeForbiddenIngredients.Value)
             {
                 recipeBaseQuery.SetExcludeIngredients(Array.Empty<int>());
             }
 
-            IEnumerable<Domain.Entities.Recipe> recipes = recipeBaseQuery.Build();
+            IEnumerable<Recipe> recipes = recipeBaseQuery.Build();
             RecipesMatchingResult matchingResult = null;
             if (request.RecipesFiltering.UseCurrentlyStoredIngredients.HasValue && request.RecipesFiltering.UseCurrentlyStoredIngredients.Value)
             {

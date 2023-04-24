@@ -1,8 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeApp.Application.Commands.RecipeN.AddRecipe;
 using RecipeApp.Application.DTOs;
-using RecipeApp.Application.Queries.Recipe.GetRecipes;
+using RecipeApp.Application.Queries.RecipeN.GetRecipes;
 using RecipeApp.Domain.Constants;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
@@ -39,6 +40,23 @@ namespace RecipeApp.Web.Controllers
 
             GetRecipesDto recipes = await _mediator.Send(getRecipesQuery);
             return Ok(recipes);
+        }
+
+        [HttpPost]
+        [SwaggerOperation(Summary = "Adds a recipe")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during adding recipe")]
+        public async Task<IActionResult> AddRecipe([FromBody] AddRecipeDto addRecipeDto)
+        {
+            AddRecipeCommand addRecipeCommand = new()
+            {
+                Recipe = addRecipeDto,
+                UserId = int.Parse(User.FindFirstValue(AuthorizationConstants.ID))
+            };
+
+            bool result = await _mediator.Send(addRecipeCommand);
+            return result ? Ok(result) : BadRequest();
         }
     }
 }

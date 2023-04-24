@@ -17,5 +17,6 @@ namespace RecipeApp.Domain.Builders
         IRecipeQueryBuilder SetSeason(Season? season);
         IRecipeQueryBuilder SetDishType(DishType? dishType);
         IRecipeQueryBuilder SetExcludeIngredients(IEnumerable<int> ingredientIds);
+        IRecipeQueryBuilder SetRecipeCreatorId(int? userId);
     }
 }

@@ -20,7 +20,7 @@ namespace RecipeApp.Application.Mappers
 
             CreateMap<DbBackup, DbBackupDto>();
             CreateMap<ExternalUser, ExternalUserDto>();
-            CreateMap<RecipeStep, RecipeStepDto>();
+            CreateMap<RecipeStep, RecipeStepDto>().ReverseMap();
             CreateMap<Recipe, RecipeDto>()
                 .ForMember(r => r.Ingredients, 
                            m => m.MapFrom(i => i.RecipeIngredients
@@ -31,6 +31,9 @@ namespace RecipeApp.Application.Mappers
                                                    Name = ri.Ingredient.Name,
                                                    Unit = ri.Ingredient.Unit
                                                })));
+
+            CreateMap<AddRecipeDto, Recipe>();
+            CreateMap<AddRecipeIngredientDto, RecipeIngredient>();
 
             CreateMap<Ingredient, IngredientDto>();
             CreateMap<AddStoredIngredientDto, StoredIngredient>();

@@ -20,6 +20,7 @@ namespace RecipeApp.Application.DTOs
         public bool? IsHealthy { get; set; }
         public Season? Season { get; set; }
         public DishType? DishType { get; set; }
+        public bool? GetUserCreatedRecipesOnly { get; set; }
         public bool? UseCurrentlyStoredIngredients { get; set; }
         public bool? ExcludeForbiddenIngredients { get; set; }
         public bool? ConsiderIngredientsAmount { get; set; }
