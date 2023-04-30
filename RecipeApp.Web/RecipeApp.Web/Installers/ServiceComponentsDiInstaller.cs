@@ -2,6 +2,7 @@
 using RecipeApp.Application.Services.AuthorizationService;
 using RecipeApp.Domain.Builders;
 using RecipeApp.Domain.Clients.RecipeApiClient;
+using RecipeApp.Domain.Constants;
 using RecipeApp.Domain.Context;
 using RecipeApp.Domain.Repositories.ExternalUserRepository;
 using RecipeApp.Domain.Repositories.FamilyMemberRepository;
@@ -54,6 +55,7 @@ using RecipeApp.Infrastructure.Persistance.Services.FamilyMemberN;
 using RecipeApp.Infrastructure.Persistance.Services.FoodRecognition;
 using RecipeApp.Infrastructure.Persistance.Services.MealPlan;
 using RecipeApp.Infrastructure.Persistance.Services.RecipeN;
+using RecipeApp.Infrastructure.Persistance.Services.StoredIngredientN;
 
 namespace RecipeApp.Web.Installers
 {
@@ -83,6 +85,12 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IMealPlanRecommendationService, MealPlanRecommendationService>();
             services.AddTransient<IAddRecipeNutritionService, AddRecipeNutritionService>();
             services.AddTransient<IDeleteRecipeService, DeleteRecipeService>();
+
+            // hosted services
+            if (bool.TryParse(configuration[ConfigurationKeys.SendIngredientsExpirationEmails], out bool sendEmails) && sendEmails)
+            {
+                services.AddHostedService<MonitorStoredIngredientService>();
+            }
 
             // builders
             services.AddTransient<IExternalUserQueryBuilder, ExternalUserQueryBuilder>();

@@ -29,6 +29,17 @@ namespace RecipeApp.Infrastructure.Persistance.Repositories.StoredIngredientRepo
             await Update(existingStoredIngredient);
         }
 
+        public async Task<IEnumerable<StoredIngredient>> GetExpiredStoredIngredientsWithUserInfo()
+        {
+            return await context.StoredIngredients
+                .Include(si => si.AppUser)
+                .AsNoTracking()
+                .Include(si => si.Ingredient)
+                .AsNoTracking()
+                .Where(si => si.ExpirationDate <= DateTime.Now.AddDays(1))
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<StoredIngredient>> GetUserStoredIngredientsWithIngredientsInfo(int userId)
         {
             return await context.StoredIngredients
