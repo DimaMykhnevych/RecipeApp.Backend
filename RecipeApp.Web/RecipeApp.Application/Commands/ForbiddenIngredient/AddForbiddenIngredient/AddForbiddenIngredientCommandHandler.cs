@@ -1,24 +1,20 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using RecipeApp.Domain.Entities;
-using RecipeApp.Domain.Repositories.ForbiddenIngredientRepository;
+using RecipeApp.Domain.Services.ForbiddenIngredientN.AddForbiddenIngredientService;
 
 namespace RecipeApp.Application.Commands.ForbiddenIngredientN.AddForbiddenIngredient
 {
     public class AddForbiddenIngredientCommandHandler : IRequestHandler<AddForbiddenIngredientCommand, bool>
     {
-        private readonly IForbiddenIngredientRepository _forbiddenIngredientRepository;
-        private readonly IMapper _mapper;
+        private readonly IAddForbiddenIngredientService _addForbiddenIngredientService;
         private readonly ILogger _logger;
 
         public AddForbiddenIngredientCommandHandler(
-            IForbiddenIngredientRepository forbiddenIngredientRepository,
-            IMapper mapper,
+            IAddForbiddenIngredientService addForbiddenIngredientService,
             ILoggerFactory loggerFactory)
         {
-            _forbiddenIngredientRepository = forbiddenIngredientRepository;
-            _mapper = mapper;
+            _addForbiddenIngredientService = addForbiddenIngredientService;
             _logger = loggerFactory?.CreateLogger(nameof(AddForbiddenIngredientCommandHandler));
         }
 
@@ -27,24 +23,13 @@ namespace RecipeApp.Application.Commands.ForbiddenIngredientN.AddForbiddenIngred
             _logger.LogInformation("Handling add forbidden ingredient request");
             ArgumentNullException.ThrowIfNull(request);
 
-            try
-            {
-                ForbiddenIngredient forbiddenIngredient = new()
+            return await _addForbiddenIngredientService.AddForbiddenIngredientAsync(
+                request.AppUserId,
+                new ForbiddenIngredient()
                 {
-                    AppUserId = request.AppUserId,
-                    IngredientId = request.ForbiddenIngredient.IngredientId
-                };
-
-                await _forbiddenIngredientRepository.Insert(forbiddenIngredient);
-                await _forbiddenIngredientRepository.Save();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occured during saving users's forbidden request" +
-                    " (IngredientId: {IngredientId}, UserId: {UserId})", request.ForbiddenIngredient.IngredientId, request.AppUserId);
-                return false;
-            }
+                    IngredientId = request.ForbiddenIngredient.IngredientId,
+                    ExternalUserId = request.ForbiddenIngredient.ExternalUserId,
+                });
         }
     }
 }

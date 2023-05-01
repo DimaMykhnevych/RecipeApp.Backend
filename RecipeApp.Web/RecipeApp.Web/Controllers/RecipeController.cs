@@ -27,7 +27,9 @@ namespace RecipeApp.Web.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Gets a filtered list of recipes", Description =
             "All parameters should be passed within the URI as a query parameters. " +
-            "AcceptableMatchIngredientsPercentage parameter should be passed within headers (default value is 80%)")]
+            "AcceptableMatchIngredientsPercentage parameter should be passed within headers (default value is 80%). " +
+            "If option ExcludeForbiddenIngredients is set, the ExternalUserId also must be set. " +
+            "If ExternalUserId is null, then the ExternalUserId of AppUser is used")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetRecipesDto))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         public async Task<IActionResult> Get([FromQuery] RecipesFilteringDto recipesFilteringDto, [FromHeader] double? acceptableMatchIngredientsPercentage)

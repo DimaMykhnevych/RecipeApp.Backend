@@ -5,25 +5,20 @@ using Microsoft.Extensions.Logging;
 using RecipeApp.Domain.Context;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Repositories.ForbiddenIngredientRepository;
+using RecipeApp.Domain.Services.ForbiddenIngredientN.DeleteForbiddenIngredientService;
 
 namespace RecipeApp.Application.Commands.ForbiddenIngredientN.DeleteForbiddenIngredient
 {
     public class DeleteForbiddenIngredientCommandHandler : IRequestHandler<DeleteForbiddenIngredientCommand, bool>
     {
-        private readonly IRecipeAppDbContext _context;
-        private readonly IForbiddenIngredientRepository _forbiddenIngredientRepository;
-        private readonly IMapper _mapper;
+        private readonly IDeleteForbiddenIngredientService _deleteForbiddenIngredientService;
         private readonly ILogger _logger;
 
         public DeleteForbiddenIngredientCommandHandler(
-            IRecipeAppDbContext context,
-            IForbiddenIngredientRepository forbiddenIngredientRepository,
-            IMapper mapper,
+            IDeleteForbiddenIngredientService deleteForbiddenIngredientService,
             ILoggerFactory loggerFactory)
         {
-            _context = context;
-            _forbiddenIngredientRepository = forbiddenIngredientRepository;
-            _mapper = mapper;
+            _deleteForbiddenIngredientService = deleteForbiddenIngredientService;
             _logger = loggerFactory?.CreateLogger(nameof(DeleteForbiddenIngredientCommandHandler));
         }
 
@@ -32,24 +27,7 @@ namespace RecipeApp.Application.Commands.ForbiddenIngredientN.DeleteForbiddenIng
             _logger.LogInformation("Handling delete forbidden ingredient request");
             ArgumentNullException.ThrowIfNull(request);
 
-            try
-            {
-                ForbiddenIngredient forbiddenIngredientToDelete = await _context.ForbiddenIngredients
-                    .FirstOrDefaultAsync(fi => fi.AppUserId == request.AppUserId && fi.Id == request.ForbiddenIngredientId, cancellationToken: cancellationToken);
-                if (forbiddenIngredientToDelete == null)
-                {
-                    return false;
-                }
-
-                _forbiddenIngredientRepository.Delete(forbiddenIngredientToDelete);
-                await _forbiddenIngredientRepository.Save();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occured during deleting users's forbidden ingredient");
-                return false;
-            }
+            return await _deleteForbiddenIngredientService.DeleteForbiddenIngredientAsync(request.AppUserId, request.ForbiddenIngredientId);
         }
     }
 }

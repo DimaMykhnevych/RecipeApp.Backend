@@ -4,6 +4,6 @@ namespace RecipeApp.Domain.Repositories.ForbiddenIngredientRepository
 {
     public interface IForbiddenIngredientRepository : IRepository<ForbiddenIngredient>
     {
-        Task<IEnumerable<ForbiddenIngredient>> GetUserForbiddenIngredients(int appUserId);
+        Task<IEnumerable<ForbiddenIngredient>> GetUserForbiddenIngredients(int externalUserId);
     }
 }

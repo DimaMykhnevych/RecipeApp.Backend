@@ -21,6 +21,15 @@ namespace RecipeApp.Infrastructure.Persistance.Repositories.FamilyRepository
             return familyMembers.Select(fm => fm.FamilyId);
         }
 
+        public async Task<IEnumerable<int>> GetExternalUserFamilyIds(int externalUserId)
+        {
+            var familyMembers = await context.FamilyMembers
+                .Where(fm => fm.ExternalUserId == externalUserId)
+                .ToListAsync();
+
+            return familyMembers.Select(fm => fm.FamilyId);
+        }
+
         public async Task<IEnumerable<FamilyMember>> GetFamilyMembers(int familyId)
         {
             return await context.FamilyMembers.Where(fm => fm.FamilyId == familyId).ToListAsync();

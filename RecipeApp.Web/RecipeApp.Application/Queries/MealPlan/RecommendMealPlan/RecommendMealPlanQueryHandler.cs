@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using RecipeApp.Application.DTOs;
-using RecipeApp.Domain.Services.MealPlan.MealPlanRecommendationService;
+using RecipeApp.Domain.Services.MealPlanN.MealPlanRecommendationService;
 
 namespace RecipeApp.Application.Queries.MealPlanN.RecommendMealPlan
 {

@@ -32,7 +32,7 @@ namespace RecipeApp.Application.Queries.ForbiddenIngredientN.GetForbiddenIngredi
             IEnumerable<ForbiddenIngredient> forbiddenIngredients = await _context.ForbiddenIngredients
                 .Include(fi => fi.Ingredient)
                 .AsNoTracking()
-                .Where(fn => fn.AppUserId == request.AppUserId)
+                .Where(fn => fn.ExternalUserId == request.ExternalUserId)
                 .ToListAsync(cancellationToken);
             IEnumerable<ForbiddenIngredientDto> forbiddenIngredientDtos = _mapper.Map<IEnumerable<ForbiddenIngredientDto>>(forbiddenIngredients);
             return new GetForbiddenIngredientsDto

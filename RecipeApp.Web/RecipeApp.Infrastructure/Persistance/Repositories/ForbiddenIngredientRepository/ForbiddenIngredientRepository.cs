@@ -11,10 +11,10 @@ namespace RecipeApp.Infrastructure.Persistance.Repositories.ForbiddenIngredientR
         {
         }
 
-        public async Task<IEnumerable<ForbiddenIngredient>> GetUserForbiddenIngredients(int appUserId)
+        public async Task<IEnumerable<ForbiddenIngredient>> GetUserForbiddenIngredients(int externalUserId)
         {
             return await context.ForbiddenIngredients
-                .Where(fi => fi.AppUserId == appUserId)
+                .Where(fi => fi.ExternalUserId == externalUserId)
                 .ToListAsync();
         }
     }

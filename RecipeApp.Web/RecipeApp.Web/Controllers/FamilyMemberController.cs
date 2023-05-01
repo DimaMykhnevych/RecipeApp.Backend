@@ -28,7 +28,7 @@ namespace RecipeApp.Web.Controllers
 
         [HttpPost]
         [SwaggerOperation(Summary = "Saves a user's family member", Description = "Set 'ExternalUserId' to null if adding new member and set all properties, " +
-            "otherwise set 'ExternalUserId' to real external user id and leave all properties except 'Info' empty")]
+            "otherwise set 'ExternalUserId' to real external user id and leave all properties except 'Info' and 'FamilyId' empty")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during saving users's family member")]

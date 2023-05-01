@@ -24,15 +24,15 @@ namespace RecipeApp.Web.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
+        [HttpGet("{externalUserId}")]
         [SwaggerOperation(Summary = "Gets a list of user's forbidden ingredients")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetForbiddenIngredientsDto))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int externalUserId)
         {
             GetForbiddenIngredientsDto forbiddenNutrients = await _mediator.Send(new GetForbiddenIngredientsQuery
             {
-                AppUserId = int.Parse(User.FindFirstValue(AuthorizationConstants.ID))
+                ExternalUserId = externalUserId
             });
 
             return Ok(forbiddenNutrients);

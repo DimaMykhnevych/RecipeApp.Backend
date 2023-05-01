@@ -60,7 +60,14 @@ namespace RecipeApp.Application.Queries.RecipeN.GetRecipes
 
             if (request.RecipesFiltering.ExcludeForbiddenIngredients.HasValue && request.RecipesFiltering.ExcludeForbiddenIngredients.Value)
             {
-                var excludeIngredients = await _context.ForbiddenIngredients.Where(fi => fi.AppUserId == request.UserId).ToListAsync();
+                var appUserExternal = await _context.ExternalUsers
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.AppUserId == request.UserId);
+                int externalUserId = request.RecipesFiltering.ExternalUserId ?? appUserExternal.Id;
+                var excludeIngredients = await _context.ForbiddenIngredients
+                    .AsNoTracking()
+                    .Where(fi => fi.ExternalUserId == externalUserId)
+                    .ToListAsync();
                 recipeBaseQuery.SetExcludeIngredients(excludeIngredients.Select(i => i.IngredientId));
             }
 

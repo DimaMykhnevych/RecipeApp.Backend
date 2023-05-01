@@ -5,6 +5,6 @@ namespace RecipeApp.Application.Queries.ForbiddenIngredientN.GetForbiddenIngredi
 {
     public class GetForbiddenIngredientsQuery : IRequest<GetForbiddenIngredientsDto>
     {
-        public int AppUserId { get; set; }
+        public int ExternalUserId { get; set; }
     }
 }

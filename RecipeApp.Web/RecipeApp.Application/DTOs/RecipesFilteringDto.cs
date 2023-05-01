@@ -5,6 +5,7 @@ namespace RecipeApp.Application.DTOs
     public class RecipesFilteringDto
     {
         public int? RecipeId { get; set; }
+        public int? ExternalUserId { get; set; }
         public string Title { get; set; }
         public double? FromCalories { get; set; }
         public double? ToCalories { get; set; }

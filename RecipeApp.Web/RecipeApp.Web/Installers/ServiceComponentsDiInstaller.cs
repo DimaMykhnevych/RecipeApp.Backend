@@ -28,6 +28,8 @@ using RecipeApp.Domain.Services.FamilyMemberN.AddFamilyMemberService;
 using RecipeApp.Domain.Services.FamilyMemberN.DeleteFamilyMemberService;
 using RecipeApp.Domain.Services.FamilyMemberN.UpdateFamilyMemberService;
 using RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients;
+using RecipeApp.Domain.Services.ForbiddenIngredientN.AddForbiddenIngredientService;
+using RecipeApp.Domain.Services.ForbiddenIngredientN.DeleteForbiddenIngredientService;
 using RecipeApp.Domain.Services.MealPlanN.MealPlanRecommendationService;
 using RecipeApp.Domain.Services.RecipeN.AddRecipeNutritionService;
 using RecipeApp.Domain.Services.RecipeN.DeleteRecipeService;
@@ -55,6 +57,7 @@ using RecipeApp.Infrastructure.Persistance.Services.DbManagement;
 using RecipeApp.Infrastructure.Persistance.Services.Family;
 using RecipeApp.Infrastructure.Persistance.Services.FamilyMemberN;
 using RecipeApp.Infrastructure.Persistance.Services.FoodRecognition;
+using RecipeApp.Infrastructure.Persistance.Services.ForbiddenIngredientN;
 using RecipeApp.Infrastructure.Persistance.Services.MealPlanN;
 using RecipeApp.Infrastructure.Persistance.Services.RecipeN;
 using RecipeApp.Infrastructure.Persistance.Services.StoredIngredientN;
@@ -87,6 +90,8 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IMealPlanRecommendationService, MealPlanRecommendationService>();
             services.AddTransient<IAddRecipeNutritionService, AddRecipeNutritionService>();
             services.AddTransient<IDeleteRecipeService, DeleteRecipeService>();
+            services.AddTransient<IAddForbiddenIngredientService, AddForbiddenIngredientService>();
+            services.AddTransient<IDeleteForbiddenIngredientService, DeleteForbiddenIngredientService>();
 
             // hosted services
             if (bool.TryParse(configuration[ConfigurationKeys.SendIngredientsExpirationEmails], out bool sendEmails) && sendEmails)

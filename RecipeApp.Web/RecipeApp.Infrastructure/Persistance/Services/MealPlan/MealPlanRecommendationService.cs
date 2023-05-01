@@ -54,7 +54,10 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
             }
 
             IEnumerable<Recipe> recipes = await GetCachedRecipes();
-            IEnumerable<ForbiddenIngredient> forbiddenIngredients = await _forbiddenIngredientRepository.GetUserForbiddenIngredients(appUserId);
+            IEnumerable<ForbiddenIngredient> forbiddenIngredients = await _forbiddenIngredientRepository.GetUserForbiddenIngredients(externalUserId);
+            var forbiddenIngredientIds = forbiddenIngredients.Select(fi => fi.IngredientId);
+            recipes = recipes.Where(r => r.RecipeIngredients.All(ri => !forbiddenIngredientIds.Contains(ri.IngredientId)));
+
             IEnumerable<ForbiddenNutrient> forbiddenNutrients = await _forbiddenNutrientRepository.GetUserForbiddenNutrients(externalUserId);
             IEnumerable<NutrientRecipe> recipeNutrients = await _nutrientRecipeRepository.GetRecipeNutrients();
 
