@@ -41,5 +41,15 @@ namespace RecipeApp.Infrastructure.Persistance.Repositories.RecipeRepository
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
+
+        public async Task<Recipe> GetRecipeWithIngredientsInfo(int id)
+        {
+            return await context.Recipes
+                .AsNoTracking()
+                .Include(r => r.RecipeIngredients)
+                .ThenInclude(ri => ri.Ingredient)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(r => r.Id == id);
+        }
     }
 }

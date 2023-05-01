@@ -34,6 +34,7 @@ using RecipeApp.Domain.Services.ForbiddenNutrientN.DeleteForbiddenNutrientServic
 using RecipeApp.Domain.Services.ForbiddenNutrientN.UpdateForbiddenNutrientService;
 using RecipeApp.Domain.Services.MealPlanN.MealPlanRecommendationService;
 using RecipeApp.Domain.Services.RecipeN.AddRecipeNutritionService;
+using RecipeApp.Domain.Services.RecipeN.CookRecipeService;
 using RecipeApp.Domain.Services.RecipeN.DeleteRecipeService;
 using RecipeApp.Domain.Services.RecipeN.IncludeIngredientsService;
 using RecipeApp.Domain.Services.User.CreateUser;
@@ -97,6 +98,7 @@ namespace RecipeApp.Web.Installers
             services.AddTransient<IDeleteForbiddenIngredientService, DeleteForbiddenIngredientService>();
             services.AddTransient<IDeleteForbiddenNutrientService, DeleteForbiddenNutrientService>();
             services.AddTransient<IUpdateForbiddenNutrientService, UpdateForbiddenNutrientService>();
+            services.AddTransient<ICookRecipeService, CookRecipeService>();
 
             // hosted services
             if (bool.TryParse(configuration[ConfigurationKeys.SendIngredientsExpirationEmails], out bool sendEmails) && sendEmails)

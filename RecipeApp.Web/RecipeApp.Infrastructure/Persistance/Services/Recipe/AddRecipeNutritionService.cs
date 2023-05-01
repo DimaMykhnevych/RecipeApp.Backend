@@ -30,7 +30,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.RecipeN
         public async Task AddRecipeNutrition(int? recipeId)
         {
             _logger.LogInformation("Adding recipe nutrition. Recipe Id: {RecipeId}", recipeId == null ? "empty" : recipeId.Value);
-            List<Domain.Entities.Recipe> recipes = new();
+            List<Recipe> recipes = new();
             if (recipeId != null)
             {
                 var recipe = await _recipeRepository.GetRecipeWithNutritionInfo(recipeId.Value);
@@ -63,7 +63,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.RecipeN
             await _nutrientRecipeRepository.Save();
         }
 
-        private async Task<IEnumerable<RecipeNutrients>> GetRecipesNutrition(IEnumerable<Domain.Entities.Recipe> recipes)
+        private async Task<IEnumerable<RecipeNutrients>> GetRecipesNutrition(IEnumerable<Recipe> recipes)
         {
             List<RecipeNutrients> recipesNutrients = new();
             foreach (var recipe in recipes)
@@ -78,7 +78,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.RecipeN
             return recipesNutrients;
         }
 
-        private async Task<RecipeNutrients> GetRecipeNutrition(Domain.Entities.Recipe recipe)
+        private async Task<RecipeNutrients> GetRecipeNutrition(Recipe recipe)
         {
             List<RecipeNutrient> nutrients = new();
             RecipeNutrients recipeNutrients = new() { Recipe = recipe, Nutrients = nutrients };

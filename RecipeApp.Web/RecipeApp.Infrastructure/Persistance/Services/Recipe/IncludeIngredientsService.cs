@@ -18,9 +18,9 @@ namespace RecipeApp.Infrastructure.Persistance.Services.RecipeN
         public async Task<RecipesMatchingResult> SetIncludeIngredients(SetStoredIngredients setStoredIngredients)
         {
             var storedIngredients = await _storedIngredientRepository.GetUserStoredIngredientsWithIngredientsInfo(setStoredIngredients.UserId);
-            List<Domain.Entities.Recipe> sortedMatchingRecipes = new();
+            List<Recipe> sortedMatchingRecipes = new();
             Dictionary<int, double> recipesMatchingPercentage = new();
-            Dictionary<int, Domain.Entities.Recipe> matchingRecipes = new();
+            Dictionary<int, Recipe> matchingRecipes = new();
             double acceptableMatchIngredientsPercentage = setStoredIngredients.AcceptableMatchIngredientsPercentage ?? defaultAcceptableMatchIngredientsPercentage;
             acceptableMatchIngredientsPercentage = acceptableMatchIngredientsPercentage < 0 
                 ? defaultAcceptableMatchIngredientsPercentage
@@ -62,7 +62,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.RecipeN
         }
 
         private static bool IncludeRecipeInResult(
-            Domain.Entities.Recipe recipe,
+            Recipe recipe,
             IEnumerable<StoredIngredient> storedIngredients,
             double acceptableMatchIngredientsPercentage,
             bool considerIngredientsAmount,

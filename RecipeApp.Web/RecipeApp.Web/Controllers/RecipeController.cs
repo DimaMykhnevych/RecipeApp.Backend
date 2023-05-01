@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeApp.Application.Commands.RecipeN.AddRecipe;
+using RecipeApp.Application.Commands.RecipeN.CookRecipe;
 using RecipeApp.Application.Commands.RecipeN.DeleteRecipe;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Application.Queries.RecipeN.GetRecipes;
@@ -62,11 +63,28 @@ namespace RecipeApp.Web.Controllers
             return result ? Ok(result) : BadRequest();
         }
 
+        [HttpPost("{recipeId}/cook")]
+        [SwaggerOperation(Summary = "Updates user's stored ingredients amount after cooking a recipe")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during cooking a recipe")]
+        public async Task<IActionResult> CookRecipe(int recipeId)
+        {
+            CookRecipeCommand cookRecipeCommand = new()
+            {
+                RecipeId = recipeId,
+                AppUserId = int.Parse(User.FindFirstValue(AuthorizationConstants.ID))
+            };
+
+            bool result = await _mediator.Send(cookRecipeCommand);
+            return result ? Ok(result) : BadRequest();
+        }
+
         [HttpDelete("{recipeId}")]
         [SwaggerOperation(Summary = "Deletes a user's recipe")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during deleting users's reciep")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during deleting users's recipe")]
         public async Task<IActionResult> DeleteRecipe(int recipeId)
         {
             DeleteRecipeCommand deleteRecipeCommand = new()
