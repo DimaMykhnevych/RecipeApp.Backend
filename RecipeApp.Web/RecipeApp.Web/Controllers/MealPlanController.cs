@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeApp.Application.Commands.MealPlanN.AddMealPlan;
+using RecipeApp.Application.Commands.MealPlanN.DeleteMealPlan;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Application.Queries.MealPlanN.GetMealPlan;
 using RecipeApp.Application.Queries.MealPlanN.RecommendMealPlan;
@@ -55,7 +56,7 @@ namespace RecipeApp.Web.Controllers
         }
 
         [HttpPost]
-        [SwaggerOperation(Summary = "Adds a meal plane. FamilyId can be null")]
+        [SwaggerOperation(Summary = "Adds a meal plan. FamilyId can be null")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during adding meal plan")]
@@ -68,6 +69,23 @@ namespace RecipeApp.Web.Controllers
             };
 
             bool result = await _mediator.Send(mealPlanCommand);
+            return result ? Ok(result) : BadRequest();
+        }
+
+        [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Deletes a meal plan")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
+        [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during deleting meal plan")]
+        public async Task<IActionResult> DeleteMealPlan(int id)
+        {
+            DeleteMealPlanCommand deleteMealPlanCommand = new()
+            {
+                MealPlanId = id,
+                AppUserId = int.Parse(User.FindFirstValue(AuthorizationConstants.ID))
+            };
+
+            bool result = await _mediator.Send(deleteMealPlanCommand);
             return result ? Ok(result) : BadRequest();
         }
     }

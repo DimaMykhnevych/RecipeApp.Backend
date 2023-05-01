@@ -53,7 +53,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.ForbiddenIngredientN
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occured during saving users's forbidden ingredient" +
+                _logger.LogError(ex, "An error occured during deleting users's forbidden ingredient" +
                     " (ForbiddenIngredientId: {ForbiddenIngredientId}, UserId: {UserId})", forbiddenIngredientId, appUserId);
                 return false;
             }

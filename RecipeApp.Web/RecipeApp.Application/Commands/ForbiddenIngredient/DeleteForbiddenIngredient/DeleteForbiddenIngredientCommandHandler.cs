@@ -1,10 +1,5 @@
-﻿using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using RecipeApp.Domain.Context;
-using RecipeApp.Domain.Entities;
-using RecipeApp.Domain.Repositories.ForbiddenIngredientRepository;
 using RecipeApp.Domain.Services.ForbiddenIngredientN.DeleteForbiddenIngredientService;
 
 namespace RecipeApp.Application.Commands.ForbiddenIngredientN.DeleteForbiddenIngredient

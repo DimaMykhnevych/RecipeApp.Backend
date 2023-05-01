@@ -51,6 +51,7 @@ namespace RecipeApp.Application.Mappers
 
             CreateMap<Nutrient, NutrientDto>();
             CreateMap<AddForbiddenNutrientCommand, ForbiddenNutrient>();
+            CreateMap<UpdateForbiddenNutrientDto, ForbiddenNutrient>();
             CreateMap<ForbiddenNutrient, ForbiddenNutrientDto>()
                 .ForMember(fn => fn.Name, m => m.MapFrom(m => m.Nutrient.Name))
                 .ForMember(fn => fn.Unit, m => m.MapFrom(m => m.Nutrient.Unit));
