@@ -90,7 +90,7 @@ namespace RecipeApp.Web.Controllers
             return Ok(isSucceeded);
         }
 
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id}")]
         [Authorize(Roles = Role.Admin)]
         [SwaggerOperation(Summary = "Deletes app user by Id",
             Description = "Available only for administrators")]
@@ -99,7 +99,7 @@ namespace RecipeApp.Web.Controllers
         [SwaggerResponse((int)HttpStatusCode.NotFound, Description = "User with provided Id was not found")]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, Description = "User is not administrator")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             bool isSucceeded;
             try

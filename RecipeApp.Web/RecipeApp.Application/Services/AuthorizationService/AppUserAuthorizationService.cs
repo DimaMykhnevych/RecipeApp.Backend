@@ -7,6 +7,7 @@ using RecipeApp.Domain.Constants;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Enums;
 using RecipeApp.Domain.Extensions;
+using RecipeApp.Domain.Repositories.ExternalUserRepository;
 using System.Security.Claims;
 
 namespace RecipeApp.Application.Services.AuthorizationService
@@ -16,17 +17,20 @@ namespace RecipeApp.Application.Services.AuthorizationService
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly IExternalUserRepository _externalUserRepository;
 
         public AppUserAuthorizationService(
             IAuthTokenFactory tokenFactory,
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IExternalUserRepository externalUserRepository)
             : base(tokenFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _externalUserRepository = externalUserRepository;
         }
 
         public override async Task<IEnumerable<Claim>> GetUserClaimsAsync(SignInCommand model)
@@ -68,11 +72,13 @@ namespace RecipeApp.Application.Services.AuthorizationService
         {
             if (userName == null) return null;
             AppUser user = await _userManager.FindByNameAsync(userName);
+            ExternalUser externalUser = await _externalUserRepository.GetByAppUserId(user.Id);
 
             UserAuthInfoDto info = new ()
             {
                 Role = user.Role,
                 UserId = user.Id,
+                ExternalUserId = externalUser.Id,
                 UserName = user.UserName,
                 RegistryDate = user.RegistryDate,
                 Email = user.Email

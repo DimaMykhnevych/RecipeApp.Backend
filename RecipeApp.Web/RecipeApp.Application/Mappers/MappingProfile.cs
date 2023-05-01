@@ -16,7 +16,8 @@ namespace RecipeApp.Application.Mappers
                     .ForMember(u => u.UserName, m => m.MapFrom(u => u.UserName));
 
             CreateMap<AppUser, UserAuthInfoDto>()
-                .ForMember(u => u.UserId, m => m.MapFrom(u => u.Id));
+                .ForMember(u => u.UserId, m => m.MapFrom(u => u.Id))
+                .ForMember(u => u.ExternalUserId, m => m.MapFrom(u => u.User.Id));
 
             CreateMap<DbBackup, DbBackupDto>();
             CreateMap<ExternalUser, ExternalUserDto>();

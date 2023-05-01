@@ -1,4 +1,5 @@
-﻿using RecipeApp.Domain.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using RecipeApp.Domain.Builders;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Infrastructure.Persistance.Context;
 
@@ -24,7 +25,9 @@ namespace RecipeApp.Infrastructure.Persistance.Builders
 
         public IAppUserQueryBuilder SetBaseUserInfo()
         {
-            _query = _dbContext.AppUsers;
+            _query = _dbContext.AppUsers
+                .Include(u => u.User)
+                .AsNoTracking();
             return this;
         }
 
