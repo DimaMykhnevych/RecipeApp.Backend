@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RecipeApp.Application.DTOs;
 using RecipeApp.Domain.Builders;
+using RecipeApp.Domain.Context;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Models;
 using RecipeApp.Domain.Services.RecipeN.IncludeIngredientsService;
@@ -11,17 +13,20 @@ namespace RecipeApp.Application.Queries.RecipeN.GetRecipes
 {
     public class GetRecipesQueryHandler : IRequestHandler<GetRecipesQuery, GetRecipesDto>
     {
+        private readonly IRecipeAppDbContext _context;
         private readonly IRecipeQueryBuilder _recipeQueryBuilder;
         private readonly IIncludeIngredientsService _includeIngredientsService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public GetRecipesQueryHandler(
+            IRecipeAppDbContext context,
             IRecipeQueryBuilder recipeQueryBuilder,
             IIncludeIngredientsService includeIngredientsService,
             IMapper mapper,
             ILoggerFactory loggerFactory)
         {
+            _context = context;
             _recipeQueryBuilder = recipeQueryBuilder;
             _includeIngredientsService = includeIngredientsService;
             _mapper = mapper;
@@ -53,10 +58,10 @@ namespace RecipeApp.Application.Queries.RecipeN.GetRecipes
                 recipeBaseQuery.SetRecipeCreatorId(request.UserId);
             }
 
-            // TODO get user's forbidden ingredients (possibly for certain family members)
             if (request.RecipesFiltering.ExcludeForbiddenIngredients.HasValue && request.RecipesFiltering.ExcludeForbiddenIngredients.Value)
             {
-                recipeBaseQuery.SetExcludeIngredients(Array.Empty<int>());
+                var excludeIngredients = await _context.ForbiddenIngredients.Where(fi => fi.AppUserId == request.UserId).ToListAsync();
+                recipeBaseQuery.SetExcludeIngredients(excludeIngredients.Select(i => i.IngredientId));
             }
 
             IEnumerable<Recipe> recipes = recipeBaseQuery.Build();

@@ -28,7 +28,7 @@ using RecipeApp.Domain.Services.FamilyMemberN.AddFamilyMemberService;
 using RecipeApp.Domain.Services.FamilyMemberN.DeleteFamilyMemberService;
 using RecipeApp.Domain.Services.FamilyMemberN.UpdateFamilyMemberService;
 using RecipeApp.Domain.Services.FoodRecognition.RecognizeIngredients;
-using RecipeApp.Domain.Services.MealPlan.MealPlanRecommendationService;
+using RecipeApp.Domain.Services.MealPlanN.MealPlanRecommendationService;
 using RecipeApp.Domain.Services.RecipeN.AddRecipeNutritionService;
 using RecipeApp.Domain.Services.RecipeN.DeleteRecipeService;
 using RecipeApp.Domain.Services.RecipeN.IncludeIngredientsService;
@@ -55,7 +55,7 @@ using RecipeApp.Infrastructure.Persistance.Services.DbManagement;
 using RecipeApp.Infrastructure.Persistance.Services.Family;
 using RecipeApp.Infrastructure.Persistance.Services.FamilyMemberN;
 using RecipeApp.Infrastructure.Persistance.Services.FoodRecognition;
-using RecipeApp.Infrastructure.Persistance.Services.MealPlan;
+using RecipeApp.Infrastructure.Persistance.Services.MealPlanN;
 using RecipeApp.Infrastructure.Persistance.Services.RecipeN;
 using RecipeApp.Infrastructure.Persistance.Services.StoredIngredientN;
 

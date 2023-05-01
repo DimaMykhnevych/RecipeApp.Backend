@@ -1,16 +1,16 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using RecipeApp.Domain.Clients.RecipeApiClient;
 using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Models;
 using RecipeApp.Domain.Repositories.ExternalUserRepository;
+using RecipeApp.Domain.Repositories.ForbiddenIngredientRepository;
 using RecipeApp.Domain.Repositories.ForbiddenNutrientRepository;
 using RecipeApp.Domain.Repositories.NutrientRecipeRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
-using RecipeApp.Domain.Services.MealPlan.MealPlanRecommendationService;
+using RecipeApp.Domain.Services.MealPlanN.MealPlanRecommendationService;
 using RecipeApp.Infrastructure.Constants;
 
-namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
+namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
 {
     public class MealPlanRecommendationService : IMealPlanRecommendationService
     {
@@ -18,6 +18,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
         private const int defaultMealPlanDaysCount = 7;
         private readonly IRecipeRepository _recipeRepository;
         private readonly IForbiddenNutrientRepository _forbiddenNutrientRepository;
+        private readonly IForbiddenIngredientRepository _forbiddenIngredientRepository;
         private readonly IExternalUserRepository _externalUserRepository;
         private readonly INutrientRecipeRepository _nutrientRecipeRepository;
         private readonly IMemoryCache _memoryCache;
@@ -27,6 +28,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
         public MealPlanRecommendationService(
             IRecipeRepository recipeRepository,
             IForbiddenNutrientRepository forbiddenNutrientRepository,
+            IForbiddenIngredientRepository forbiddenIngredientRepository,
             IExternalUserRepository externalUserRepository,
             INutrientRecipeRepository nutrientRecipeRepository,
             IMemoryCache memoryCache,
@@ -34,13 +36,14 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
         {
             _recipeRepository = recipeRepository;
             _forbiddenNutrientRepository = forbiddenNutrientRepository;
+            _forbiddenIngredientRepository = forbiddenIngredientRepository;
             _externalUserRepository = externalUserRepository;
             _nutrientRecipeRepository = nutrientRecipeRepository;
             _memoryCache = memoryCache;
             _logger = loggerFactory?.CreateLogger(nameof(MealPlanRecommendationService));
         }
 
-        public async Task<Domain.Entities.MealPlan> GetRecommendedMealPlan(int appUserId, int externalUserId)
+        public async Task<MealPlan> GetRecommendedMealPlan(int appUserId, int externalUserId)
         {
             _logger.LogInformation("Getting meal plan recommendation for user with External Id: {ExternalUserId}", externalUserId);
 
@@ -50,7 +53,8 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
                 return null;
             }
 
-            IEnumerable<Domain.Entities.Recipe> recipes = await GetCachedRecipes();
+            IEnumerable<Recipe> recipes = await GetCachedRecipes();
+            IEnumerable<ForbiddenIngredient> forbiddenIngredients = await _forbiddenIngredientRepository.GetUserForbiddenIngredients(appUserId);
             IEnumerable<ForbiddenNutrient> forbiddenNutrients = await _forbiddenNutrientRepository.GetUserForbiddenNutrients(externalUserId);
             IEnumerable<NutrientRecipe> recipeNutrients = await _nutrientRecipeRepository.GetRecipeNutrients();
 
@@ -109,7 +113,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
             }
 
             _logger.LogDebug("Building meal plan");
-            Domain.Entities.MealPlan resultMealPlan = new()
+            MealPlan resultMealPlan = new()
             {
                 AppUserId = appUserId,
                 MealPlanDate = DateTime.Now,
@@ -121,7 +125,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
 
         private static List<MealPlanDay> GetMealPlanDays(
             List<MealPlanNutrients> mealPlanNutrients,
-            IEnumerable<Domain.Entities.Recipe> recipes)
+            IEnumerable<Recipe> recipes)
         {
             if (mealPlanNutrients.Count <= defaultMealPlanDaysCount)
             {
@@ -146,7 +150,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
 
         private static List<MealPlanDay> BuildMealPlanDays(
             List<MealPlanNutrients> mealPlanNutrients,
-            IEnumerable<Domain.Entities.Recipe> recipes)
+            IEnumerable<Recipe> recipes)
         {
             var mealPlanDays = new List<MealPlanDay>();
             var weekDays = new List<DayOfWeek>()
@@ -183,7 +187,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
         }
 
         private static IEnumerable<RecipeNutrients> GetRecipesNutrition(
-            IEnumerable<Domain.Entities.Recipe> recipes,
+            IEnumerable<Recipe> recipes,
             IEnumerable<NutrientRecipe> storedRecipeNutrients)
         {
             List<RecipeNutrients> recipesNutrients = new();
@@ -231,9 +235,9 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlan
             return totalNutrients;
         }
 
-        private async Task<IEnumerable<Domain.Entities.Recipe>> GetCachedRecipes()
+        private async Task<IEnumerable<Recipe>> GetCachedRecipes()
         {
-            bool isRecipesAvaiable = _memoryCache.TryGetValue(CacheKeys.Recipes, out IEnumerable<Domain.Entities.Recipe> recipes);
+            bool isRecipesAvaiable = _memoryCache.TryGetValue(CacheKeys.Recipes, out IEnumerable<Recipe> recipes);
             if (isRecipesAvaiable)
             {
                 return recipes;

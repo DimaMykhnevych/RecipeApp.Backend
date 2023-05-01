@@ -1,4 +1,5 @@
-﻿using RecipeApp.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using RecipeApp.Domain.Entities;
 using RecipeApp.Domain.Repositories.ForbiddenIngredientRepository;
 using RecipeApp.Infrastructure.Persistance.Context;
 
@@ -8,6 +9,13 @@ namespace RecipeApp.Infrastructure.Persistance.Repositories.ForbiddenIngredientR
     {
         public ForbiddenIngredientRepository(RecipeAppDbContext context) : base(context)
         {
+        }
+
+        public async Task<IEnumerable<ForbiddenIngredient>> GetUserForbiddenIngredients(int appUserId)
+        {
+            return await context.ForbiddenIngredients
+                .Where(fi => fi.AppUserId == appUserId)
+                .ToListAsync();
         }
     }
 }
