@@ -65,6 +65,9 @@ namespace RecipeApp.Application.Mappers
             CreateMap<MealPlan, GetMealPlanDto>();
             CreateMap<MealPlanDay, GetMealPlanDayDto>();
             CreateMap<Ingestion, GetIngestionDto>();
+
+            CreateMap<ForbiddenIngredient, ForbiddenIngredientDto>()
+                .ForMember(fi => fi.Name, m => m.MapFrom(i => i.Ingredient.Name));
         }
     }
 }

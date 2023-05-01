@@ -21,5 +21,6 @@ namespace RecipeApp.Domain.Context
         DbSet<NutrientIngredient> NutrientIngredients { get; set; }
         DbSet<NutrientRecipe> NutrientRecipes { get; set; }
         DbSet<ForbiddenNutrient> ForbiddenNutrients { get; set; }
+        DbSet<ForbiddenIngredient> ForbiddenIngredients { get; set; }
     }
 }

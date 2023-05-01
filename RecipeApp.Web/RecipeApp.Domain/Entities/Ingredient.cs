@@ -8,6 +8,7 @@
 
         public ICollection<RecipeIngredient> RecipeIngredients { get; set; }
         public ICollection<StoredIngredient> StoredIngredients { get; set; }
+        public ICollection<ForbiddenIngredient> ForbiddenIngredients { get; set; }
         public ICollection<NutrientIngredient> NutrientIngredients { get; set; }
     }
 }

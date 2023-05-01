@@ -72,7 +72,7 @@ namespace RecipeApp.Web.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "Error during deleting users's stored ingredients")]
-        public async Task<IActionResult> Update([FromBody] DeleteStoredIngredientsCommand deleteStoredIngredientsCommand)
+        public async Task<IActionResult> Delete([FromBody] DeleteStoredIngredientsCommand deleteStoredIngredientsCommand)
         {
             bool result = await _mediator.Send(deleteStoredIngredientsCommand);
             return result ? Ok(result) : BadRequest();
