@@ -28,7 +28,13 @@ namespace RecipeApp.Application.Queries.MealPlanN.RecommendMealPlan
             ArgumentNullException.ThrowIfNull(request);
 
             Domain.Entities.MealPlan mealPlan = 
-                await _mealPlanRecommendationService.GetRecommendedMealPlan(request.AppUserId, request.ExternalUserId);
+                await _mealPlanRecommendationService.GetRecommendedMealPlan(new ()
+                {
+                    AppUserId = request.AppUserId,
+                    ExternalUserId = request.ExternalUserId,
+                    AcceptableMatchIngredientsPercentage = request.MealPlanRecommendationParameters.AcceptableMatchIngredientsPercentage,
+                    ConsiderIngredientsAmount = request.MealPlanRecommendationParameters.ConsiderIngredientsAmount
+                });
 
             return _mapper.Map<GetRecommendedMealPlanDto>(mealPlan);
         }

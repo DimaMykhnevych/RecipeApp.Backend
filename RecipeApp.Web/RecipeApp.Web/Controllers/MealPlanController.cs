@@ -45,12 +45,13 @@ namespace RecipeApp.Web.Controllers
         [SwaggerOperation(Summary = "Gets a recommended meal plan")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetRecommendedMealPlanDto))]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, Description = "User was not authorized")]
-        public async Task<IActionResult> GetMealPlanRecommendation(int externalUserId)
+        public async Task<IActionResult> GetMealPlanRecommendation(int externalUserId, [FromQuery] MealPlanRecommendationParametersDto mealPlanRecommendationParameters)
         {
             GetRecommendedMealPlanDto mealPlan = await _mediator.Send(new RecommendMealPlanQuery 
             { 
                 ExternalUserId = externalUserId,
-                AppUserId = int.Parse(User.FindFirstValue(AuthorizationConstants.ID))
+                AppUserId = int.Parse(User.FindFirstValue(AuthorizationConstants.ID)),
+                MealPlanRecommendationParameters = mealPlanRecommendationParameters
             });
             return Ok(mealPlan);
         }

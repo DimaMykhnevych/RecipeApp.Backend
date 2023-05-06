@@ -7,7 +7,9 @@ using RecipeApp.Domain.Repositories.ForbiddenIngredientRepository;
 using RecipeApp.Domain.Repositories.ForbiddenNutrientRepository;
 using RecipeApp.Domain.Repositories.NutrientRecipeRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
+using RecipeApp.Domain.Repositories.StoredIngredientRepository;
 using RecipeApp.Domain.Services.MealPlanN.MealPlanRecommendationService;
+using RecipeApp.Domain.Services.RecipeN.IncludeIngredientsService;
 using RecipeApp.Infrastructure.Constants;
 
 namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
@@ -21,6 +23,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
         private readonly IForbiddenIngredientRepository _forbiddenIngredientRepository;
         private readonly IExternalUserRepository _externalUserRepository;
         private readonly INutrientRecipeRepository _nutrientRecipeRepository;
+        private readonly IIncludeIngredientsService _includeIngredientsService;
         private readonly IMemoryCache _memoryCache;
         private readonly ILogger _logger;
         private static readonly SemaphoreSlim getRecipesSemaphore = new(1, 1);
@@ -31,6 +34,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
             IForbiddenIngredientRepository forbiddenIngredientRepository,
             IExternalUserRepository externalUserRepository,
             INutrientRecipeRepository nutrientRecipeRepository,
+            IIncludeIngredientsService includeIngredientsService,
             IMemoryCache memoryCache,
             ILoggerFactory loggerFactory)
         {
@@ -39,26 +43,41 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
             _forbiddenIngredientRepository = forbiddenIngredientRepository;
             _externalUserRepository = externalUserRepository;
             _nutrientRecipeRepository = nutrientRecipeRepository;
+            _includeIngredientsService = includeIngredientsService;
             _memoryCache = memoryCache;
             _logger = loggerFactory?.CreateLogger(nameof(MealPlanRecommendationService));
         }
 
-        public async Task<MealPlan> GetRecommendedMealPlan(int appUserId, int externalUserId)
+        public async Task<MealPlan> GetRecommendedMealPlan(MealPlanRecommendationParameters mealPlanRecommendationParameters)
         {
-            _logger.LogInformation("Getting meal plan recommendation for user with External Id: {ExternalUserId}", externalUserId);
+            _logger.LogInformation("Getting meal plan recommendation for user with External Id: {ExternalUserId}", mealPlanRecommendationParameters.ExternalUserId);
 
-            ExternalUser externalUser = await _externalUserRepository.Get(externalUserId);
+            ExternalUser externalUser = await _externalUserRepository.Get(mealPlanRecommendationParameters.ExternalUserId);
             if (externalUser == null)
             {
                 return null;
             }
 
+            // getting cached recieps
             IEnumerable<Recipe> recipes = await GetCachedRecipes();
-            IEnumerable<ForbiddenIngredient> forbiddenIngredients = await _forbiddenIngredientRepository.GetUserForbiddenIngredients(externalUserId);
+
+            // excluding recipes with forbidden ingredeines
+            IEnumerable<ForbiddenIngredient> forbiddenIngredients = await _forbiddenIngredientRepository.GetUserForbiddenIngredients(mealPlanRecommendationParameters.ExternalUserId);
             var forbiddenIngredientIds = forbiddenIngredients.Select(fi => fi.IngredientId);
             recipes = recipes.Where(r => r.RecipeIngredients.All(ri => !forbiddenIngredientIds.Contains(ri.IngredientId)));
 
-            IEnumerable<ForbiddenNutrient> forbiddenNutrients = await _forbiddenNutrientRepository.GetUserForbiddenNutrients(externalUserId);
+            // considering stored ingredients
+            var recipesWithStoredIngredients = await _includeIngredientsService.SetIncludeIngredients(new()
+            {
+                UserId = mealPlanRecommendationParameters.AppUserId,
+                FilteredRecipes = recipes,
+                AcceptableMatchIngredientsPercentage = mealPlanRecommendationParameters.AcceptableMatchIngredientsPercentage,
+                ConsiderIngredientsAmount = mealPlanRecommendationParameters.ConsiderIngredientsAmount
+            });
+
+            recipes = recipesWithStoredIngredients.FilteredRecipes;
+
+            IEnumerable<ForbiddenNutrient> forbiddenNutrients = await _forbiddenNutrientRepository.GetUserForbiddenNutrients(mealPlanRecommendationParameters.ExternalUserId);
             IEnumerable<NutrientRecipe> recipeNutrients = await _nutrientRecipeRepository.GetRecipeNutrients();
 
             IEnumerable<RecipeNutrients> recipeNutrition = GetRecipesNutrition(recipes, recipeNutrients);
@@ -118,7 +137,7 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
             _logger.LogDebug("Building meal plan");
             MealPlan resultMealPlan = new()
             {
-                AppUserId = appUserId,
+                AppUserId = mealPlanRecommendationParameters.AppUserId,
                 MealPlanDate = DateTime.Now,
                 MealPlanDays = GetMealPlanDays(filteredMealPlans, recipes),
             };

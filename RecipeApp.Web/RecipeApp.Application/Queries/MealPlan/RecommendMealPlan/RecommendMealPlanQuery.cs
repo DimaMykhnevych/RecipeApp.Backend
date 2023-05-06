@@ -7,5 +7,6 @@ namespace RecipeApp.Application.Queries.MealPlanN.RecommendMealPlan
     {
         public int ExternalUserId { get; set; }
         public int AppUserId { get; set; }
+        public MealPlanRecommendationParametersDto MealPlanRecommendationParameters { get; set; }
     }
 }
