@@ -35,6 +35,11 @@ namespace RecipeApp.Application.Commands.RecipeN.AddRecipe
             {
                 Recipe recipe = _mapper.Map<Recipe>(request.Recipe);
                 recipe.AppUserId = request.UserId;
+                if (recipe.Servings <= 0)
+                {
+                    recipe.Servings = 1;
+                }
+
                 Recipe addedRecipe = await _recipeRepository.Insert(recipe);
                 await _recipeRepository.Save();
 
