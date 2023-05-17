@@ -33,7 +33,12 @@ namespace RecipeApp.Application.Queries.MealPlanN.RecommendMealPlan
                     AppUserId = request.AppUserId,
                     ExternalUserId = request.ExternalUserId,
                     AcceptableMatchIngredientsPercentage = request.MealPlanRecommendationParameters.AcceptableMatchIngredientsPercentage,
-                    ConsiderIngredientsAmount = request.MealPlanRecommendationParameters.ConsiderIngredientsAmount
+                    ConsiderIngredientsAmount = request.MealPlanRecommendationParameters.ConsiderIngredientsAmount,
+                    Calories = request.MealPlanRecommendationParameters.Calories,
+                    Carbs = request.MealPlanRecommendationParameters.Carbs,
+                    Fat = request.MealPlanRecommendationParameters.Fat,
+                    Protein = request.MealPlanRecommendationParameters.Protein,
+                    MealPlanGenerationSecondsLimit = request.MealPlanRecommendationParameters.MealPlanGenerationSecondsLimit,
                 });
 
             return _mapper.Map<GetRecommendedMealPlanDto>(mealPlan);

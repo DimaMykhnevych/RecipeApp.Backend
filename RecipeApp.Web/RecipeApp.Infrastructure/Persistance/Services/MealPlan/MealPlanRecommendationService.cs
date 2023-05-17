@@ -7,10 +7,10 @@ using RecipeApp.Domain.Repositories.ForbiddenIngredientRepository;
 using RecipeApp.Domain.Repositories.ForbiddenNutrientRepository;
 using RecipeApp.Domain.Repositories.NutrientRecipeRepository;
 using RecipeApp.Domain.Repositories.RecipeRepository;
-using RecipeApp.Domain.Repositories.StoredIngredientRepository;
 using RecipeApp.Domain.Services.MealPlanN.MealPlanRecommendationService;
 using RecipeApp.Domain.Services.RecipeN.IncludeIngredientsService;
 using RecipeApp.Infrastructure.Constants;
+using System.Diagnostics;
 
 namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
 {
@@ -18,6 +18,9 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
     {
         private const int cacheExpirationMinutes = 20;
         private const int defaultMealPlanDaysCount = 7;
+        private const int defaultMandatoryDishesPerDayCount = 3;
+        private const int macroNutrientsScatterPercentage = 10;
+        private const int defaultMealPlanGenerationSecondsLimit = 100;
         private readonly IRecipeRepository _recipeRepository;
         private readonly IForbiddenNutrientRepository _forbiddenNutrientRepository;
         private readonly IForbiddenIngredientRepository _forbiddenIngredientRepository;
@@ -85,32 +88,55 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
             List<MealPlanNutrients> mealPlans = new();
 
             _logger.LogDebug("Making all possible combinations of dishes");
+            var watch = Stopwatch.StartNew();
+            var breakRequired = false;
             foreach (var breakfast in recipes
-                .Where(r => r.DishType == DishType.Breakfast || r.DishType == DishType.Any))
+                .Where(r => r.DishType == DishType.Breakfast))
             {
+                if (breakRequired) break;
                 var breakfastNutrients = recipeNutrition.First(rn => rn.Recipe.Id == breakfast.Id);
 
                 foreach (var lunch in recipes
-                    .Where(r => r.DishType == DishType.Lunch || r.DishType == DishType.Snack))
+                    .Where(r => r.DishType == DishType.Lunch))
                 {
+                    if (breakRequired) break;
                     var lunchNutrients = recipeNutrition.First(rn => rn.Recipe.Id == lunch.Id);
 
                     foreach (var dinner in recipes
-                        .Where(r => r.DishType == DishType.Dinner || r.DishType == DishType.Snack))
+                        .Where(r => r.DishType == DishType.Dinner))
                     {
+                        if (breakRequired) break;
                         var dinnerNutrients = recipeNutrition.First(rn => rn.Recipe.Id == dinner.Id);
-                        if (lunch.Id != dinner.Id)
+                        MealPlanNutrients mealPlan = new()
                         {
-                            MealPlanNutrients mealPlan = new()
-                            {
-                                RecipeIds = new int[] { breakfast.Id, lunch.Id, dinner.Id },
-                                Nutrients = MergeNutrients(breakfastNutrients, lunchNutrients, dinnerNutrients)
-                            };
-                            mealPlans.Add(mealPlan);
+                            RecipeIds = new int[] { breakfast.Id, lunch.Id, dinner.Id },
+                            Nutrients = MergeNutrients(breakfastNutrients, lunchNutrients, dinnerNutrients),
+                            Calories = breakfast.Calories + lunch.Calories + dinner.Calories,
+                            Carbs = breakfast.Carbs + lunch.Carbs + dinner.Carbs,
+                            Fat = breakfast.Fat + lunch.Fat + dinner.Fat,
+                            Protein = breakfast.Protein + lunch.Protein + dinner.Protein,
+                        };
+                        mealPlans.Add(mealPlan);
+
+                        var elapsedSeconds = watch.ElapsedMilliseconds / 1000.0;
+                        var mealPlanGenerationSecondsLimit = mealPlanRecommendationParameters.MealPlanGenerationSecondsLimit ?? defaultMealPlanGenerationSecondsLimit;
+                        if (elapsedSeconds >= mealPlanGenerationSecondsLimit)
+                        {
+                            _logger.LogWarning("Terminating dishes combination as maximum time limit was reached." +
+                                " Combinations count: {CombinationsCount}. Elapsed seconds: {ElapsedSeconds}", mealPlans.Count, elapsedSeconds);
+                            breakRequired = true;
+                            watch.Stop();
+                            break;
                         }
                     }
                 }
             }
+
+            _logger.LogDebug("Made {CombinationsCount} possible combinations. Elapsed seconds: {ElapsedSeconds}", mealPlans.Count, watch.ElapsedMilliseconds / 1000.0);
+            watch.Stop();
+
+            _logger.LogDebug("Filtering meal plans by user's macro nutrients limitations (calories, protein, fat, carbs)");
+            mealPlans = FilterMealPlansByMacroNutrients(mealPlans, mealPlanRecommendationParameters);
 
             _logger.LogDebug("Filtering meal plans by user's nutrients limitations");
             List<MealPlanNutrients> filteredMealPlans = new();
@@ -142,7 +168,148 @@ namespace RecipeApp.Infrastructure.Persistance.Services.MealPlanN
                 MealPlanDays = GetMealPlanDays(filteredMealPlans, recipes),
             };
 
+            TryAddSnacks(resultMealPlan, recipeNutrition, forbiddenNutrients, mealPlanRecommendationParameters);
             return resultMealPlan;
+        }
+
+        private void TryAddSnacks(
+            MealPlan baseMealPlan,
+            IEnumerable<RecipeNutrients> recipeNutrients,
+            IEnumerable<ForbiddenNutrient> forbiddenNutrients,
+            MealPlanRecommendationParameters mealPlanRecommendationParameters)
+        {
+            try
+            {
+                var daysAmount = baseMealPlan.MealPlanDays.Count / defaultMandatoryDishesPerDayCount;
+                var snacks = recipeNutrients.Where(r => r.Recipe.DishType == DishType.Snack);
+
+                Random rng = new();
+                var mealPlanDaySnacks = new List<MealPlanDay>();
+                for (int i = 0; i < daysAmount; i++)
+                {
+                    var shuffledSnacks = snacks.OrderBy(s => rng.Next());
+                    Recipe[] recipesForDay =
+                    {
+                        baseMealPlan.MealPlanDays.ElementAt(i * defaultMandatoryDishesPerDayCount).Recipe,
+                        baseMealPlan.MealPlanDays.ElementAt(i * defaultMandatoryDishesPerDayCount + 1).Recipe,
+                        baseMealPlan.MealPlanDays.ElementAt(i * defaultMandatoryDishesPerDayCount + 2).Recipe
+                    };
+
+                    var breakfast = recipeNutrients.First(rn => recipesForDay[0].Id == rn.Recipe.Id);
+                    var lunch = recipeNutrients.First(rn => recipesForDay[1].Id == rn.Recipe.Id);
+                    var dinner = recipeNutrients.First(rn => recipesForDay[2].Id == rn.Recipe.Id);
+
+                    foreach (var snack in shuffledSnacks)
+                    {
+                        RecipeNutrients[] recipeNutrientsForDay = { breakfast, lunch, dinner, snack };
+                        var totalNutrients = MergeNutrients(recipeNutrientsForDay);
+                        bool includeSnackByNutrients = true;
+                        foreach (var forbiddenNutrient in forbiddenNutrients)
+                        {
+                            var mealPlanNutrient = totalNutrients.FirstOrDefault(n => n.Id == forbiddenNutrient.NutrientId);
+                            if (mealPlanNutrient != null && mealPlanNutrient.PercentOfDailyNeeds >= forbiddenNutrient.RequiredPercentageOfDailyNeeds)
+                            {
+                                includeSnackByNutrients = false;
+                                break;
+                            }
+                        }
+
+                        if (includeSnackByNutrients)
+                        {
+                            // checking by macro nutrients
+                            var resultMealPlan = FilterMealPlansByMacroNutrients(
+                                new List<MealPlanNutrients>()
+                                {
+                                    new()
+                                    {
+                                        Calories = breakfast.Recipe.Calories + lunch.Recipe.Calories + dinner.Recipe.Calories + snack.Recipe.Calories,
+                                        Carbs = breakfast.Recipe.Carbs + lunch.Recipe.Carbs + dinner.Recipe.Carbs + snack.Recipe.Carbs,
+                                        Fat = breakfast.Recipe.Fat + lunch.Recipe.Fat + dinner.Recipe.Fat + snack.Recipe.Fat,
+                                        Protein = breakfast.Recipe.Protein + lunch.Recipe.Protein + dinner.Recipe.Protein + snack.Recipe.Protein,
+                                    }
+                                }, mealPlanRecommendationParameters);
+
+                            if (resultMealPlan.Any())
+                            {
+                                var currentDayLastDish = baseMealPlan.MealPlanDays.ElementAt(i * defaultMandatoryDishesPerDayCount + 2);
+                                MealPlanDay mealPlanDay = new()
+                                {
+                                    RecipeId = snack.Recipe.Id,
+                                    Servings = snack.Recipe.Servings,
+                                    Recipe = snack.Recipe,
+                                    Ingestion = new()
+                                    {
+                                        Order = defaultMandatoryDishesPerDayCount + 1,
+                                        DishType = DishType.Snack,
+                                        DayOfWeek = currentDayLastDish.Ingestion.DayOfWeek
+                                    }
+                                };
+
+                                mealPlanDaySnacks.Add(mealPlanDay);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                for (int i = 0; i < mealPlanDaySnacks.Count; i++)
+                {
+                    baseMealPlan.MealPlanDays.Add(mealPlanDaySnacks[i]);
+                }
+
+                baseMealPlan.MealPlanDays = baseMealPlan.MealPlanDays
+                    .OrderBy(m => m.Ingestion.DayOfWeek)
+                    .ThenBy(m => m.Ingestion.Order)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred when trying to add snacks to meal plan");
+            }
+        }
+
+        private static List<MealPlanNutrients> FilterMealPlansByMacroNutrients(
+            List<MealPlanNutrients> mealPlans,
+            MealPlanRecommendationParameters mealPlanRecommendationParameters)
+        {
+            List<MealPlanNutrients> filteredMealPlans = mealPlans;
+            if (mealPlanRecommendationParameters.Calories != null)
+            {
+                var allowableCaloriesDispersion = mealPlanRecommendationParameters.Calories / macroNutrientsScatterPercentage;
+                filteredMealPlans = filteredMealPlans
+                    .Where(p => p.Calories >= mealPlanRecommendationParameters.Calories - allowableCaloriesDispersion &&
+                           p.Calories <= mealPlanRecommendationParameters.Calories + allowableCaloriesDispersion)
+                    .ToList();
+            }
+
+            if (mealPlanRecommendationParameters.Protein != null)
+            {
+                var allowableProteinDispersion = mealPlanRecommendationParameters.Protein / macroNutrientsScatterPercentage;
+                filteredMealPlans = filteredMealPlans
+                    .Where(p => p.Protein >= mealPlanRecommendationParameters.Protein - allowableProteinDispersion &&
+                           p.Protein <= mealPlanRecommendationParameters.Protein + allowableProteinDispersion)
+                    .ToList();
+            }
+
+            if (mealPlanRecommendationParameters.Fat != null)
+            {
+                var allowableFatDispersion = mealPlanRecommendationParameters.Fat / macroNutrientsScatterPercentage;
+                filteredMealPlans = filteredMealPlans
+                    .Where(p => p.Protein >= mealPlanRecommendationParameters.Fat - allowableFatDispersion &&
+                           p.Protein <= mealPlanRecommendationParameters.Fat + allowableFatDispersion)
+                    .ToList();
+            }
+
+            if (mealPlanRecommendationParameters.Carbs != null)
+            {
+                var allowableCarbsDispersion = mealPlanRecommendationParameters.Carbs / macroNutrientsScatterPercentage;
+                filteredMealPlans = filteredMealPlans
+                    .Where(p => p.Protein >= mealPlanRecommendationParameters.Carbs - allowableCarbsDispersion &&
+                           p.Protein <= mealPlanRecommendationParameters.Carbs + allowableCarbsDispersion)
+                    .ToList();
+            }
+
+            return filteredMealPlans;
         }
 
         private static List<MealPlanDay> GetMealPlanDays(

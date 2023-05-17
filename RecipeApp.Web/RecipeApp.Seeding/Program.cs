@@ -29,7 +29,8 @@ AddRecipeService addRecipeService = new(
     );
 
 int recipesAmount = 1;
-
+//int[] breakfastRecipeIds = { 657306, 643150, 652111, 651765, 643450, 661758, 643857, 658624, 632928, 1096276 };
+//int[] dinnerRecipeIds = { 716627, 660306, 636589, 715421, 652417, 716361, 659135, 639851, 633921, 658579 };
 for (int i = 0; i < recipesAmount; i++)
 {
     Console.WriteLine($"Adding recipe #{i}");
