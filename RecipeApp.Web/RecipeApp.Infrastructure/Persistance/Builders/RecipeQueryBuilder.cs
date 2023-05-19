@@ -1,16 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RecipeApp.Domain.Builders;
+using RecipeApp.Domain.Context;
 using RecipeApp.Domain.Entities;
-using RecipeApp.Infrastructure.Persistance.Context;
 
 namespace RecipeApp.Infrastructure.Persistance.Builders
 {
     public class RecipeQueryBuilder : IRecipeQueryBuilder
     {
-        private readonly RecipeAppDbContext _dbContext;
+        private readonly IRecipeAppDbContext _dbContext;
         private IQueryable<Recipe> _query;
 
-        public RecipeQueryBuilder(RecipeAppDbContext dbContext)
+        public RecipeQueryBuilder(IRecipeAppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
